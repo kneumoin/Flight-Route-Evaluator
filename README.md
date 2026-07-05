@@ -1,6 +1,6 @@
 # Flight Route Evaluator
 
-Config-driven CLI to evaluate predefined flight route branches for expedition logistics **MOW → KTM**.
+Config-driven CLI to evaluate predefined flight route branches. Origin, destination, and candidate routes are defined in a YAML config.
 
 ## Prerequisites
 

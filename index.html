@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Flight Route Evaluator — MOW → KTM</title>
-  <meta name="description" content="Config-driven flight route evaluator for expedition logistics Moscow to Kathmandu.">
+  <title>Flight Route Evaluator</title>
+  <meta name="description" content="Config-driven CLI to evaluate predefined flight route branches.">
   <style>
     :root {
       --bg: #0f1419;
@@ -34,7 +34,6 @@
       margin-bottom: 2rem;
     }
     h1 { font-size: 1.75rem; margin: 0 0 .5rem; font-weight: 700; }
-    .route { color: var(--accent); }
     .tagline { color: var(--muted); margin: 0; font-size: 1.05rem; }
     .lang-switch button {
       background: var(--surface);
@@ -104,7 +103,7 @@
     <header>
       <div>
         <h1><span data-i18n="title">Flight Route Evaluator</span></h1>
-        <p class="tagline"><span class="route">MOW → KTM</span> · <span data-i18n="tagline">экспедиционная логистика</span></p>
+        <p class="tagline" data-i18n="tagline">оценка маршрутов по YAML-конфигу</p>
       </div>
       <div class="lang-switch">
         <button id="btn-ru" class="active" type="button" onclick="setLang('ru')">RU</button>
@@ -116,8 +115,8 @@
       <h2 data-i18n="about_h">О проекте</h2>
       <p data-i18n="about_p">
         CLI-инструмент на Go для сравнения заранее заданных маршрутов перелёта
-        (не произвольный поиск). Оценивает цену, стыковки, багаж, визовые риски
-        и формирует двуязычный HTML-отчёт для экспедиции в регион Кanchenjunga.
+        из YAML-конфига (не произвольный поиск). Оценивает цену, стыковки, багаж,
+        визовые риски и формирует двуязычный HTML-отчёт.
       </p>
     </section>
 
@@ -176,9 +175,9 @@ open ./out/report.html</code></pre>
     const i18n = {
       ru: {
         title: "Flight Route Evaluator",
-        tagline: "экспедиционная логистика",
+        tagline: "оценка маршрутов по YAML-конфигу",
         about_h: "О проекте",
-        about_p: "CLI-инструмент на Go для сравнения заранее заданных маршрутов перелёта (не произвольный поиск). Оценивает цену, стыковки, багаж, визовые риски и формирует двуязычный HTML-отчёт для экспедиции в регион Kangchenjunga.",
+        about_p: "CLI-инструмент на Go для сравнения заранее заданных маршрутов перелёта из YAML-конфига (не произвольный поиск). Оценивает цену, стыковки, багаж, визовые риски и формирует двуязычный HTML-отчёт.",
         quick_h: "Быстрый старт",
         docs_h: "Документация",
         spec_link: "Техническое задание",
@@ -195,9 +194,9 @@ open ./out/report.html</code></pre>
       },
       en: {
         title: "Flight Route Evaluator",
-        tagline: "expedition logistics",
+        tagline: "YAML-config-driven route evaluation",
         about_h: "About",
-        about_p: "Go CLI to compare predefined flight route branches (not arbitrary search). Evaluates price, connections, baggage, visa risk, and produces a bilingual HTML report for a Kangchenjunga region expedition.",
+        about_p: "Go CLI to compare predefined flight route branches from a YAML config (not arbitrary search). Evaluates price, connections, baggage, visa risk, and produces a bilingual HTML report.",
         quick_h: "Quick start",
         docs_h: "Documentation",
         spec_link: "Technical specification",
