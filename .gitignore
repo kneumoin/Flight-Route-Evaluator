@@ -1,0 +1,6 @@
+.cache/
+out/
+history/
+coverage.out
+*.env
+.env.*

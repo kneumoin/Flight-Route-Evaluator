@@ -1,0 +1,6 @@
+branch_id,branch_name,status,reason_codes,price,currency,price_normalized,duration_minutes,connection_minutes,baggage_kg,visa_risk,self_transfer,score,provider
+istanbul,Via Istanbul,ok,,120000,USD,120000,840,240,30,LOW,false,81.50,mock
+qatar_doha,Qatar via Doha,ok,,85000,USD,85000,720,180,30,LOW,false,81.38,mock
+china_chengdu,Via Chengdu,ok,,93000,USD,93000,1020,360,30,LOW,false,79.13,mock
+aeroflot_dubai_flydubai,Aeroflot + Flydubai via Dubai,ok,,7200000,RUB,79200,1080,540,25,LOW,true,77.60,mock
+delhi_mixed,Via Delhi,rejected,TRANSIT_VISA_REQUIRED,,,,,,,,,,

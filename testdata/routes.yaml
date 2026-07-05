@@ -1,0 +1,109 @@
+trip:
+  origin: MOW
+  destination: KTM
+  departure_date: 2026-09-28
+  passengers: 1
+  cabin: economy
+
+constraints:
+  max_stops: 1
+  avoid_transfer_visas: true
+  allow_self_transfer: true
+  baggage:
+    checked_required: true
+    min_checked_kg: 23
+
+cache:
+  enabled: false
+  ttl: 24h
+  directory: .cache
+
+history:
+  enabled: false
+  directory: history
+
+providers:
+  - id: mock
+    enabled: true
+
+scoring:
+  currency: USD
+  weights:
+    price: 1.0
+    duration: 0.5
+    baggage: 0.3
+    visa: 1.0
+    self_transfer: 0.8
+    late_arrival: 0.4
+  late_arrival_after: "18:00"
+
+branches:
+  - id: qatar_doha
+    name: Qatar via Doha
+    type: single_ticket
+    visa_policy: airside_only
+    min_connection_hours: 2
+    max_connection_hours: 8
+    legs:
+      - from: MOW
+        to: DOH
+        preferred_airlines: [QR]
+      - from: DOH
+        to: KTM
+        preferred_airlines: [QR]
+
+  - id: aeroflot_dubai_flydubai
+    name: Aeroflot + Flydubai via Dubai
+    type: self_transfer
+    visa_policy: no_extra_visa
+    min_connection_hours: 8
+    max_connection_hours: 18
+    legs:
+      - from: MOW
+        to: DXB
+        preferred_airlines: [SU]
+      - from: DXB
+        to: KTM
+        preferred_airlines: [FZ]
+
+  - id: delhi_mixed
+    name: Via Delhi
+    type: mixed_carrier
+    visa_policy: transit_only
+    min_connection_hours: 5
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: DEL
+        preferred_airlines: [SU, AI]
+      - from: DEL
+        to: KTM
+        preferred_airlines: [AI, 6E]
+
+  - id: istanbul
+    name: Via Istanbul
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 3
+    max_connection_hours: 10
+    legs:
+      - from: MOW
+        to: IST
+        preferred_airlines: [SU, TK]
+      - from: IST
+        to: KTM
+        preferred_airlines: [TK]
+
+  - id: china_chengdu
+    name: Via Chengdu
+    type: mixed_carrier
+    visa_policy: transit_or_twov
+    min_connection_hours: 4
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: TFU
+        preferred_airlines: [CA, 3U]
+      - from: TFU
+        to: KTM
+        preferred_airlines: [CA, 3U]

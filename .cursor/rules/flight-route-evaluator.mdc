@@ -1,0 +1,56 @@
+---
+description: Flight Route Evaluator — follow SPEC, IMPLEMENTATION_PLAN, TASKS.yaml
+alwaysApply: true
+---
+
+# Flight Route Evaluator
+
+Read before any work:
+
+1. **SPEC.md** — immutable requirements (do not change during implementation)
+2. **IMPLEMENTATION_PLAN.md** — execution rules and quality gates
+3. **TASKS.yaml** — task board; update status as you work
+4. **REVIEWER.md** — use when acting as reviewer agent (review only, no implementation)
+
+## Dual-agent workflow
+
+**Coder (Agent mode):** SPEC + IMPLEMENTATION_PLAN + TASKS → write code → stop at gate  
+**Reviewer (separate chat):** REVIEWER.md + **git diff** → full review report → APPROVED / CHANGES_REQUESTED → **no fixes**  
+**Single-agent MVP:** use IMPLEMENTATION_PLAN § Single-agent MVP start prompt — full self-review report required; only literal APPROVED proceeds
+
+Full prompts: IMPLEMENTATION_PLAN.md § Agent prompts
+
+After each stage: coder stops at Review Gate; Stage N+1 starts only after reviewer **APPROVED**.
+
+## Execution
+
+- Follow task dependencies in TASKS.yaml
+- **Keep TASKS.yaml up to date** — mark each task `in_progress` / `done` / `blocked` as you go; include `notes`, `tests`, `completed_at` when done (see IMPLEMENTATION_PLAN Status tracking rule)
+- Mark one task `in_progress` at a time
+- Do not implement code unless implementing a task from TASKS.yaml
+- Stop after stage gate reports **ready for review** until reviewer **APPROVED**
+- **Stage 4** — do not implement unless explicitly requested after MVP
+
+## Non-negotiable constraints
+
+- **Config-driven only** — predefined branches from YAML; no arbitrary search
+- **One-stop / single-transfer only**
+- **No database** — filesystem cache only
+- **No SQL** for flight queries
+- **Static bilingual report.html** required; no HTTP server
+- **--provider mock** must work without API keys
+- **Currency** — show original; score normalized; never silently mix
+- **Timezones** — airport-local; late arrival in Asia/Kathmandu
+- **Reason codes** — unified taxonomy for failures
+- **No provider historical price APIs** — local JSONL accumulation only (Stage 4)
+- **JSONL price history allowed** — `history/prices.jsonl` is not a database
+- **SU** — warn/unavailable when needed; not a global requirement
+- **SupportedAirlines** — advisory; partial/unknown providers not auto-rejected
+
+## Testing
+
+- Unit + integration + golden tests required
+- ≥70% coverage on internal/
+- No real API tests in CI; no browser automation
+
+Do not add features in SPEC "Do-Not-Implement List" or IMPLEMENTATION_PLAN "Forbidden behaviors".

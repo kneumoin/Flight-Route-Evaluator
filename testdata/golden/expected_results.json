@@ -1,0 +1,244 @@
+{
+  "generated_at": "2026-07-05T10:30:00Z",
+  "trip": {
+    "origin": "MOW",
+    "destination": "KTM",
+    "departure_date": "2026-09-28",
+    "passengers": 1,
+    "cabin": "economy"
+  },
+  "branches": [
+    {
+      "branch_id": "istanbul",
+      "branch_name": "Via Istanbul",
+      "status": "ok",
+      "offer": {
+        "branch_id": "istanbul",
+        "provider": "mock+mock",
+        "segments": [
+          {
+            "from": "MOW",
+            "to": "IST",
+            "departure": "2026-09-28T10:00:00+03:00",
+            "arrival": "2026-09-28T14:00:00+03:00",
+            "airline": "TK",
+            "flight_number": "TK500",
+            "duration": 14400000000000
+          },
+          {
+            "from": "IST",
+            "to": "KTM",
+            "departure": "2026-09-28T18:00:00+03:00",
+            "arrival": "2026-09-29T00:00:00+05:45",
+            "airline": "TK",
+            "flight_number": "TK501",
+            "duration": 21600000000000
+          }
+        ],
+        "price": {
+          "amount": 120000,
+          "currency": "USD"
+        },
+        "price_normalized": {
+          "amount": 120000,
+          "currency": "USD"
+        },
+        "total_duration": 50400000000000,
+        "connection_duration": 14400000000000,
+        "checked_baggage_kg": 30,
+        "self_transfer": false,
+        "visa_risk": "LOW"
+      },
+      "score": 81.50000000000001,
+      "breakdown": {
+        "price": 40,
+        "duration": 72,
+        "baggage": 100,
+        "visa": 100,
+        "self_transfer": 100,
+        "late_arrival": 100,
+        "penalties": 0,
+        "total": 81.50000000000001
+      },
+      "providers": [
+        "mock"
+      ]
+    },
+    {
+      "branch_id": "qatar_doha",
+      "branch_name": "Qatar via Doha",
+      "status": "ok",
+      "offer": {
+        "branch_id": "qatar_doha",
+        "provider": "mock+mock",
+        "segments": [
+          {
+            "from": "MOW",
+            "to": "DOH",
+            "departure": "2026-09-28T08:00:00+03:00",
+            "arrival": "2026-09-28T13:00:00+03:00",
+            "airline": "QR",
+            "flight_number": "QR001",
+            "duration": 18000000000000
+          },
+          {
+            "from": "DOH",
+            "to": "KTM",
+            "departure": "2026-09-28T16:00:00+03:00",
+            "arrival": "2026-09-28T20:00:00+05:45",
+            "airline": "QR",
+            "flight_number": "QR002",
+            "duration": 14400000000000
+          }
+        ],
+        "price": {
+          "amount": 85000,
+          "currency": "USD"
+        },
+        "price_normalized": {
+          "amount": 85000,
+          "currency": "USD"
+        },
+        "total_duration": 43200000000000,
+        "connection_duration": 10800000000000,
+        "checked_baggage_kg": 30,
+        "self_transfer": false,
+        "visa_risk": "LOW"
+      },
+      "score": 81.37500000000001,
+      "breakdown": {
+        "price": 57.5,
+        "duration": 76,
+        "baggage": 100,
+        "visa": 100,
+        "self_transfer": 100,
+        "late_arrival": 50,
+        "penalties": 0,
+        "total": 81.37500000000001
+      },
+      "providers": [
+        "mock"
+      ]
+    },
+    {
+      "branch_id": "china_chengdu",
+      "branch_name": "Via Chengdu",
+      "status": "ok",
+      "offer": {
+        "branch_id": "china_chengdu",
+        "provider": "mock+mock",
+        "segments": [
+          {
+            "from": "MOW",
+            "to": "TFU",
+            "departure": "2026-09-28T06:00:00+03:00",
+            "arrival": "2026-09-28T14:00:00+08:00",
+            "airline": "CA",
+            "flight_number": "CA600",
+            "duration": 28800000000000
+          },
+          {
+            "from": "TFU",
+            "to": "KTM",
+            "departure": "2026-09-28T20:00:00+08:00",
+            "arrival": "2026-09-28T23:00:00+05:45",
+            "airline": "CA",
+            "flight_number": "CA601",
+            "duration": 10800000000000
+          }
+        ],
+        "price": {
+          "amount": 93000,
+          "currency": "USD"
+        },
+        "price_normalized": {
+          "amount": 93000,
+          "currency": "USD"
+        },
+        "total_duration": 61200000000000,
+        "connection_duration": 21600000000000,
+        "checked_baggage_kg": 30,
+        "self_transfer": false,
+        "visa_risk": "LOW"
+      },
+      "score": 79.12500000000001,
+      "breakdown": {
+        "price": 53.5,
+        "duration": 66,
+        "baggage": 100,
+        "visa": 100,
+        "self_transfer": 100,
+        "late_arrival": 50,
+        "penalties": 0,
+        "total": 79.12500000000001
+      },
+      "providers": [
+        "mock"
+      ]
+    },
+    {
+      "branch_id": "aeroflot_dubai_flydubai",
+      "branch_name": "Aeroflot + Flydubai via Dubai",
+      "status": "ok",
+      "offer": {
+        "branch_id": "aeroflot_dubai_flydubai",
+        "provider": "mock+mock",
+        "segments": [
+          {
+            "from": "MOW",
+            "to": "DXB",
+            "departure": "2026-09-28T09:00:00+03:00",
+            "arrival": "2026-09-28T14:00:00+04:00",
+            "airline": "SU",
+            "flight_number": "SU100",
+            "duration": 18000000000000
+          },
+          {
+            "from": "DXB",
+            "to": "KTM",
+            "departure": "2026-09-28T23:00:00+04:00",
+            "arrival": "2026-09-29T03:00:00+05:45",
+            "airline": "FZ",
+            "flight_number": "FZ200",
+            "duration": 14400000000000
+          }
+        ],
+        "price": {
+          "amount": 7200000,
+          "currency": "RUB"
+        },
+        "price_normalized": {
+          "amount": 79200,
+          "currency": "USD"
+        },
+        "total_duration": 64800000000000,
+        "connection_duration": 32400000000000,
+        "checked_baggage_kg": 25,
+        "self_transfer": true,
+        "visa_risk": "LOW"
+      },
+      "score": 77.60000000000002,
+      "breakdown": {
+        "price": 60.4,
+        "duration": 64,
+        "baggage": 100,
+        "visa": 100,
+        "self_transfer": 60,
+        "late_arrival": 100,
+        "penalties": 0,
+        "total": 77.60000000000002
+      },
+      "providers": [
+        "mock"
+      ]
+    },
+    {
+      "branch_id": "delhi_mixed",
+      "branch_name": "Via Delhi",
+      "status": "rejected",
+      "reason_codes": [
+        "TRANSIT_VISA_REQUIRED"
+      ]
+    }
+  ]
+}

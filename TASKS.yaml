@@ -1,0 +1,501 @@
+# Flight Route Evaluator — Task Board
+# Update status as work progresses: todo | in_progress | blocked | done
+# Optional fields when done/blocked: completed_at, notes, tests, blocker
+# Spec: SPEC.md | Plan: IMPLEMENTATION_PLAN.md | Review: REVIEWER.md
+
+project: flight-route-evaluator
+version: 1
+
+stages:
+  - id: stage1
+    name: Deterministic core (mock pipeline)
+  - id: stage2
+    name: Real providers + cache
+  - id: stage3
+    name: Scoring and visa tuning
+  - id: stage4
+    name: Price history / tracking
+
+tasks:
+  # ─── Stage 1: Foundation ───────────────────────────────────────────
+
+  - id: s1-t01
+    title: Initialize Go module and repository skeleton
+    stage: stage1
+    dependencies: []
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - go.mod exists with valid module path
+      - Directory layout matches SPEC.md (cmd/, internal/, configs/, testdata/)
+      - .gitignore covers .cache/, out/, history/, *.env
+
+  - id: s1-t02
+    title: Implement domain models (model package)
+    stage: stage1
+    dependencies: [s1-t01]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Types defined per SPEC — Offer, Segment, Money, BranchResult, ReasonCode, Risk, BranchStatus
+      - Reason code constants match SPEC taxonomy
+      - Airport timezone lookup stub or map in model/scoring
+
+  - id: s1-t03
+    title: Implement config loader (YAML parse)
+    stage: stage1
+    dependencies: [s1-t02]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - configs/routes.yaml example parses into typed Config struct
+      - All config sections loaded — trip, constraints, cache, providers, scoring, branches
+
+  - id: s1-t04
+    title: Implement config validation + unit tests
+    stage: stage1
+    dependencies: [s1-t03]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Valid config passes; invalid IATA, unknown enum, min>max connection, negative hours fail
+      - Table-driven tests with testdata/config/ fixtures
+      - go test ./internal/config/... passes
+
+  - id: s1-t05
+    title: Implement airport timezone map
+    stage: stage1
+    dependencies: [s1-t02]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Static IATA → IANA map for MOW, KTM, DXB, DOH, DEL, IST, TFU at minimum
+      - Unit test verifies Location set on segment times
+      - Connection duration computed from UTC instants
+
+  - id: s1-t06
+    title: Implement reason code bilingual mappers
+    stage: stage1
+    dependencies: [s1-t02]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Each ReasonCode maps to RU and EN human-readable strings
+      - Unit tests cover all codes in SPEC
+
+  - id: s1-t07
+    title: Implement Provider interface and registry
+    stage: stage1
+    dependencies: [s1-t02]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Provider interface matches SPEC
+      - Registry registers providers by id
+      - ProviderCapabilities includes AirlineCoverageMode
+
+  - id: s1-t08
+    title: Implement mock provider with deterministic offers
+    stage: stage1
+    dependencies: [s1-t07]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Returns fixed offers per leg for testdata/routes.yaml
+      - Supports SU and non-SU legs deterministically
+      - Includes baggage, price, segment times with timezones
+
+  - id: s1-t09
+    title: Implement provider selection logic + unit tests
+    stage: stage1
+    dependencies: [s1-t07, s1-t08]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - provider_hint wins over auto-selection
+      - Auto-select prefers declared airline coverage
+      - partial/unknown coverage providers not excluded solely for missing map entry
+      - SU leg with no SU-capable enabled provider → NO_PROVIDER path
+      - go test ./internal/provider/... and search selection tests pass
+
+  - id: s1-t10
+    title: Implement static FX rates and currency normalization
+    stage: stage1
+    dependencies: [s1-t02]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - fx_rates.yaml or embedded map converts supported currencies to scoring.currency
+      - Unconvertible currency sets CURRENCY_UNCONVERTIBLE
+      - Unit tests for conversion and failure path
+
+  - id: s1-t11
+    title: Implement scoring engine (basic)
+    stage: stage1
+    dependencies: [s1-t02, s1-t05, s1-t10]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Higher score is better (0–100 scale per Open Questions default)
+      - Price, duration, baggage, self-transfer, late-arrival (KTM local) factors
+      - Connection bounds reject with CONNECTION_TOO_SHORT / CONNECTION_TOO_LONG
+      - TRANSIT_VISA_REQUIRED hard reject path (basic visa stub ok)
+      - BAGGAGE_UNKNOWN reject when checked_required and unknown
+
+  - id: s1-t12
+    title: Scoring unit tests
+    stage: stage1
+    dependencies: [s1-t11]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Tests named per SPEC — CheaperRoute, VisaReject, SelfTransfer, MissingBaggage, UnknownBaggage, Currency, LateArrival
+      - All scoring unit tests pass
+
+  - id: s1-t13
+    title: Implement search orchestration (branch evaluation)
+    stage: stage1
+    dependencies: [s1-t08, s1-t09, s1-t11]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Evaluates only config-defined branches
+      - Multi-leg assembly per Open Questions default (combine within connection window)
+      - Produces BranchResult with status, reason codes, best offer, score
+      - Supports single_ticket, mixed_carrier, self_transfer types
+
+  - id: s1-t14
+    title: Search orchestration unit tests
+    stage: stage1
+    dependencies: [s1-t13]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Tests for valid combination, connection reject, no offers, no provider
+      - go test ./internal/search/... passes
+
+  - id: s1-t15
+    title: Implement results.json writer
+    stage: stage1
+    dependencies: [s1-t13, s1-t06]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Writes normalized JSON with trip metadata, ranked branches, reason codes, scores
+      - Schema stable for golden test
+
+  - id: s1-t16
+    title: Implement report.csv writer
+    stage: stage1
+    dependencies: [s1-t13]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - All columns per SPEC including reason_codes, price_normalized
+      - Sorted by score descending
+      - Locale-neutral English headers
+
+  - id: s1-t17
+    title: Implement bilingual report.html generator
+    stage: stage1
+    dependencies: [s1-t15, s1-t06]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Single self-contained file — embedded JSON, translations, inline CSS/JS
+      - RU default; EN switcher top-right; localStorage persistence
+      - All 9 required sections per SPEC
+      - No external CDN dependencies
+      - Reason codes with bilingual explanations
+
+  - id: s1-t18
+    title: Report unit tests and golden test setup
+    stage: stage1
+    dependencies: [s1-t15, s1-t16, s1-t17]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - HTML string tests — RU/EN labels, switcher, offline-ready
+      - Golden files in testdata/ with -update workflow documented
+      - Timestamp normalization for golden HTML comparison
+
+  - id: s1-t19
+    title: Implement CLI (cmd/flight-routes)
+    stage: stage1
+    dependencies: [s1-t13, s1-t15, s1-t16, s1-t17]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Flags — config, out, provider mock, verbose
+      - --provider mock skips real providers and cache
+      - Exit non-zero on invalid config
+      - Writes all three outputs to --out directory
+
+  - id: s1-t20
+    title: Create configs/routes.yaml expedition example
+    stage: stage1
+    dependencies: [s1-t04]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Matches SPEC example branches (5 branches)
+      - Parses and validates successfully
+
+  - id: s1-t21
+    title: Create testdata/routes.yaml and mock fixtures
+    stage: stage1
+    dependencies: [s1-t08, s1-t20]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - testdata/routes.yaml tuned for deterministic integration test
+      - Mock offers produce known ranking and at least one rejected/unavailable branch
+
+  - id: s1-t22
+    title: Integration test (full pipeline)
+    stage: stage1
+    dependencies: [s1-t19, s1-t21, s1-t18]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - config → search → scoring → report with mock provider
+      - Verifies branch count, stable ranking, outputs generated
+      - go test integration path passes
+
+  - id: s1-t23
+    title: Write README.md
+    stage: stage1
+    dependencies: [s1-t19]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Prerequisites, quick start with --provider mock, env vars, open report.html
+      - Links to SPEC.md, IMPLEMENTATION_PLAN.md, TASKS.yaml, REVIEWER.md
+
+  - id: s1-t24
+    title: Stage 1 gate — acceptance verification + review
+    stage: stage1
+    dependencies: [s1-t22, s1-t23]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - go run ./cmd/flight-routes --config configs/routes.yaml --out ./out --provider mock succeeds
+      - go test ./... passes
+      - internal/ coverage ≥ 70%
+      - Golden tests green
+      - Implementation agent reports "Stage 1 complete — ready for review"
+      - Reviewer agent (REVIEWER.md) returns APPROVED
+
+  # ─── Stage 2: Real providers + cache ───────────────────────────────
+
+  - id: s2-t01
+    title: Implement filesystem cache package
+    stage: stage2
+    dependencies: [s1-t24]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - .cache/<provider>/<hash>.json layout
+      - TTL from config; SHA-256 cache keys
+      - Raw JSON storage; mutex per key during fetch
+
+  - id: s2-t02
+    title: Cache unit tests
+    stage: stage2
+    dependencies: [s2-t01]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Tests for miss, hit, expired, corrupted JSON
+      - Uses t.TempDir()
+
+  - id: s2-t03
+    title: Implement Aviasales/Travelpayouts provider
+    stage: stage2
+    dependencies: [s2-t01, s1-t07]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - HTTP/JSON search per leg
+      - Maps response to Offer model with original currency and segments
+      - Uses cache when enabled
+      - Declares capabilities including SU coverage and AirlineCoverageMode
+      - Graceful skip when AVIASALES_TOKEN missing
+
+  - id: s2-t04
+    title: Implement Kiwi provider stub or full implementation
+    stage: stage2
+    dependencies: [s2-t01, s1-t07]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Stub returns clear not-configured error OR full impl if API available
+      - Document setup in README
+      - Graceful skip when KIWI_API_KEY missing
+
+  - id: s2-t05
+    title: Wire real providers into CLI and registry
+    stage: stage2
+    dependencies: [s2-t03, s2-t04, s1-t19]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Default mode uses enabled providers from config
+      - --provider mock still works unchanged
+      - provider_hint and auto-selection work with real providers
+
+  - id: s2-t06
+    title: Provider unit tests (HTTP mocked)
+    stage: stage2
+    dependencies: [s2-t03]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - Aviasales response parsing tested with fixture JSON
+      - No real network calls in CI
+
+  - id: s2-t07
+    title: Stage 2 gate — MVP acceptance verification + review
+    stage: stage2
+    dependencies: [s2-t05, s2-t02, s2-t06]
+    status: done
+    completed_at: 2026-07-05T09:10:51Z
+    acceptance_criteria:
+      - All SPEC MVP acceptance criteria (items 1–13) satisfied
+      - Stage 1 gate still passes with --provider mock
+      - Cache integrated for real provider path
+      - go test ./... passes; coverage ≥ 70%
+      - Implementation agent reports "Stage 2 complete — ready for review"
+      - Reviewer agent (REVIEWER.md) returns APPROVED
+
+  # ─── Stage 3: Tuning ───────────────────────────────────────────────
+
+  - id: s3-t01
+    title: Implement visa rules static table
+    stage: stage3
+    dependencies: [s2-t07]
+    status: todo
+    acceptance_criteria:
+      - visa_rules.yaml or embedded map for hub countries
+      - TRANSIT_VISA_REQUIRED integrated with branch visa_policy
+      - Unit tests for DOH, DXB, DEL, IST, TFU hubs
+
+  - id: s3-t02
+    title: Refine baggage scoring
+    stage: stage3
+    dependencies: [s2-t07]
+    status: todo
+    acceptance_criteria:
+      - Penalties match SPEC tables
+      - Tests updated for edge cases
+
+  - id: s3-t03
+    title: Refine self-transfer penalties
+    stage: stage3
+    dependencies: [s2-t07]
+    status: todo
+    acceptance_criteria:
+      - Self-transfer penalty applied per branch type and connection window
+      - Tests cover short connection on self-transfer branch
+
+  - id: s3-t04
+    title: Refine late-arrival penalty and weight tuning
+    stage: stage3
+    dependencies: [s2-t07]
+    status: todo
+    acceptance_criteria:
+      - scoring.weights from config applied
+      - late_arrival_after in Asia/Kathmandu tested with fixtures
+      - Golden tests updated if report output changes
+
+  - id: s3-t05
+    title: Stage 3 gate — tuning complete + review
+    stage: stage3
+    dependencies: [s3-t01, s3-t02, s3-t03, s3-t04]
+    status: todo
+    acceptance_criteria:
+      - All Stage 3 SPEC checklist items done
+      - go test ./... passes
+      - Golden tests green
+      - Implementation agent reports "Stage 3 complete — ready for review"
+      - Reviewer agent (REVIEWER.md) returns APPROVED
+
+  # ─── Stage 4: Price History / Tracking ─────────────────────────────
+
+  - id: s4-t01
+    title: Implement history config (enabled, directory)
+    stage: stage4
+    dependencies: [s3-t05]
+    status: todo
+    acceptance_criteria:
+      - history.enabled and history.directory in Config struct
+      - Default directory history/; validation passes
+      - Unit tests for config parsing
+
+  - id: s4-t02
+    title: Implement JSONL append writer (internal/history)
+    stage: stage4
+    dependencies: [s4-t01, s1-t02]
+    status: todo
+    acceptance_criteria:
+      - Append one JSON line per branch per run; never overwrite file
+      - Observation schema matches SPEC (observed_at, branch_id, status, price fields)
+      - Creates history directory if missing
+      - Unit tests for append and file creation
+
+  - id: s4-t03
+    title: Implement history reader and per-branch stats aggregation
+    stage: stage4
+    dependencies: [s4-t02]
+    status: todo
+    acceptance_criteria:
+      - Parse JSONL; skip corrupt lines
+      - Compute current, previous, min, max, avg, count per branch_id
+      - Trend vs previous and vs average (percentage)
+      - Uses price_normalized when available for cross-run stats
+      - Unit tests with fixture JSONL files
+
+  - id: s4-t04
+    title: Wire history append into CLI after successful run
+    stage: stage4
+    dependencies: [s4-t02, s1-t19]
+    status: todo
+    acceptance_criteria:
+      - Appends after evaluation + report generation complete
+      - Skipped when history.enabled false
+      - Unavailable/rejected branches optionally appended without price
+      - --provider mock runs also append (for testing accumulation)
+
+  - id: s4-t05
+    title: Add Price dynamics section to HTML report
+    stage: stage4
+    dependencies: [s4-t03, s1-t17]
+    status: todo
+    acceptance_criteria:
+      - Section shown only when prior history exists (excluding current run append)
+      - Bilingual table headers RU/EN
+      - Columns — Route, Current, Previous, Min, Avg, Max, Trend, Observations
+      - Trend shows arrow and percentage
+      - Snapshot/string tests updated
+
+  - id: s4-t06
+    title: History integration tests and README update
+    stage: stage4
+    dependencies: [s4-t04, s4-t05]
+    status: todo
+    acceptance_criteria:
+      - Integration test — two mock runs append JSONL; second report shows dynamics
+      - README documents local price history accumulation (not API history)
+      - history/ in gitignore verified
+
+  - id: s4-t07
+    title: Stage 4 gate — price history complete + review
+    stage: stage4
+    dependencies: [s4-t06]
+    status: todo
+    acceptance_criteria:
+      - All Stage 4 SPEC acceptance criteria satisfied
+      - go test ./... passes
+      - No provider historical price API calls introduced
+      - Implementation agent reports "Stage 4 complete — ready for review"
+      - Reviewer agent (REVIEWER.md) returns APPROVED

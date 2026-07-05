@@ -1,0 +1,9 @@
+trip:
+  origin: MOW1
+  destination: KTM
+  departure_date: 2026-09-28
+  passengers: 1
+  cabin: economy
+scoring:
+  currency: USD
+branches: []
