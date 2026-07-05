@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flight Route Evaluator — MOW → KTM</title>
+  <meta name="description" content="Config-driven flight route evaluator for expedition logistics Moscow to Kathmandu.">
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --border: #30363d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    h1 { font-size: 1.75rem; margin: 0 0 .5rem; font-weight: 700; }
+    .route { color: var(--accent); }
+    .tagline { color: var(--muted); margin: 0; font-size: 1.05rem; }
+    .lang-switch button {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .35rem .75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: .875rem;
+    }
+    .lang-switch button.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+      font-weight: 600;
+    }
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    h2 { font-size: 1.1rem; margin: 0 0 .75rem; color: var(--accent2); }
+    p { margin: 0 0 .75rem; }
+    p:last-child { margin-bottom: 0; }
+    ul { margin: .5rem 0 0; padding-left: 1.25rem; }
+    li { margin: .35rem 0; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre {
+      font-family ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .875rem;
+    }
+    pre {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: .75rem 0 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: .75rem;
+      margin-top: .75rem;
+    }
+    .card {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .85rem 1rem;
+    }
+    .card strong { display: block; margin-bottom: .25rem; }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .875rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1><span data-i18n="title">Flight Route Evaluator</span></h1>
+        <p class="tagline"><span class="route">MOW → KTM</span> · <span data-i18n="tagline">экспедиционная логистика</span></p>
+      </div>
+      <div class="lang-switch">
+        <button id="btn-ru" class="active" type="button" onclick="setLang('ru')">RU</button>
+        <button id="btn-en" type="button" onclick="setLang('en')">EN</button>
+      </div>
+    </header>
+
+    <section>
+      <h2 data-i18n="about_h">О проекте</h2>
+      <p data-i18n="about_p">
+        CLI-инструмент на Go для сравнения заранее заданных маршрутов перелёта
+        (не произвольный поиск). Оценивает цену, стыковки, багаж, визовые риски
+        и формирует двуязычный HTML-отчёт для экспедиции в регион Кanchenjunga.
+      </p>
+    </section>
+
+    <section>
+      <h2 data-i18n="quick_h">Быстрый старт</h2>
+      <pre><code>git clone https://github.com/kneumoin/nepal.git
+cd nepal
+go test ./...
+go run ./cmd/flight-routes \
+  --config configs/routes.yaml \
+  --out ./out \
+  --provider mock
+open ./out/report.html</code></pre>
+    </section>
+
+    <section>
+      <h2 data-i18n="docs_h">Документация</h2>
+      <div class="grid">
+        <div class="card">
+          <strong>SPEC.md</strong>
+          <a href="https://github.com/kneumoin/nepal/blob/main/SPEC.md" data-i18n="spec_link">Техническое задание</a>
+        </div>
+        <div class="card">
+          <strong>README.md</strong>
+          <a href="https://github.com/kneumoin/nepal/blob/main/README.md" data-i18n="readme_link">Установка и запуск</a>
+        </div>
+        <div class="card">
+          <strong>IMPLEMENTATION_PLAN.md</strong>
+          <a href="https://github.com/kneumoin/nepal/blob/main/IMPLEMENTATION_PLAN.md" data-i18n="plan_link">План реализации</a>
+        </div>
+        <div class="card">
+          <strong>TASKS.yaml</strong>
+          <a href="https://github.com/kneumoin/nepal/blob/main/TASKS.yaml" data-i18n="tasks_link">Доска задач</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-i18n="features_h">Возможности MVP</h2>
+      <ul>
+        <li data-i18n="f1">Только ветки из YAML-конфига (one-stop / self-transfer)</li>
+        <li data-i18n="f2">Mock-режим без API-ключей (<code>--provider mock</code>)</li>
+        <li data-i18n="f3">Отчёты: HTML (RU/EN), CSV, JSON</li>
+        <li data-i18n="f4">Провайдеры: mock, Aviasales, Kiwi (stub)</li>
+        <li data-i18n="f5">Файловый кэш — без базы данных</li>
+      </ul>
+    </section>
+
+    <footer>
+      <span data-i18n="footer">Репозиторий:</span>
+      <a href="https://github.com/kneumoin/nepal">github.com/kneumoin/nepal</a>
+    </footer>
+  </div>
+
+  <script>
+    const i18n = {
+      ru: {
+        title: "Flight Route Evaluator",
+        tagline: "экспедиционная логистика",
+        about_h: "О проекте",
+        about_p: "CLI-инструмент на Go для сравнения заранее заданных маршрутов перелёта (не произвольный поиск). Оценивает цену, стыковки, багаж, визовые риски и формирует двуязычный HTML-отчёт для экспедиции в регион Kangchenjunga.",
+        quick_h: "Быстрый старт",
+        docs_h: "Документация",
+        spec_link: "Техническое задание",
+        readme_link: "Установка и запуск",
+        plan_link: "План реализации",
+        tasks_link: "Доска задач",
+        features_h: "Возможности MVP",
+        f1: "Только ветки из YAML-конфига (one-stop / self-transfer)",
+        f2: "Mock-режим без API-ключей (--provider mock)",
+        f3: "Отчёты: HTML (RU/EN), CSV, JSON",
+        f4: "Провайдеры: mock, Aviasales, Kiwi (stub)",
+        f5: "Файловый кэш — без базы данных",
+        footer: "Репозиторий:"
+      },
+      en: {
+        title: "Flight Route Evaluator",
+        tagline: "expedition logistics",
+        about_h: "About",
+        about_p: "Go CLI to compare predefined flight route branches (not arbitrary search). Evaluates price, connections, baggage, visa risk, and produces a bilingual HTML report for a Kangchenjunga region expedition.",
+        quick_h: "Quick start",
+        docs_h: "Documentation",
+        spec_link: "Technical specification",
+        readme_link: "Setup & usage",
+        plan_link: "Implementation plan",
+        tasks_link: "Task board",
+        features_h: "MVP features",
+        f1: "Config-defined branches only (one-stop / self-transfer)",
+        f2: "Mock mode without API keys (--provider mock)",
+        f3: "Reports: HTML (RU/EN), CSV, JSON",
+        f4: "Providers: mock, Aviasales, Kiwi (stub)",
+        f5: "Filesystem cache — no database",
+        footer: "Repository:"
+      }
+    };
+
+    function setLang(loc) {
+      localStorage.setItem("site-lang", loc);
+      document.documentElement.lang = loc;
+      document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        var k = el.getAttribute("data-i18n");
+        if (i18n[loc][k]) el.textContent = i18n[loc][k];
+      });
+      document.getElementById("btn-ru").classList.toggle("active", loc === "ru");
+      document.getElementById("btn-en").classList.toggle("active", loc === "en");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      setLang(localStorage.getItem("site-lang") || "ru");
+    });
+  </script>
+</body>
+</html>
