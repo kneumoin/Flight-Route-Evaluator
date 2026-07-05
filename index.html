@@ -1,19 +1,22 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Flight Route Evaluator</title>
-  <meta name="description" content="Config-driven CLI to evaluate predefined flight route branches.">
+  <title>Flight Route Evaluator — Expedition flight route analysis</title>
+  <meta name="description" content="Route evaluation tool for expedition logistics. Compares predefined flight routes by price, baggage, visa risk, and connections. Bilingual reports.">
   <style>
     :root {
-      --bg: #0f1419;
-      --surface: #1a2332;
-      --text: #e6edf3;
-      --muted: #8b949e;
-      --accent: #58a6ff;
-      --accent2: #3fb950;
-      --border: #30363d;
+      --bg: #0b0f14;
+      --surface: #151b24;
+      --surface2: #1c2430;
+      --text: #e8edf4;
+      --muted: #8b9cb3;
+      --accent: #4da3ff;
+      --accent2: #34c759;
+      --warn: #f5a623;
+      --border: #2a3444;
+      --legal: #6b7a90;
     }
     * { box-sizing: border-box; }
     body {
@@ -23,18 +26,18 @@
       color: var(--text);
       line-height: 1.6;
     }
-    .wrap { max-width: 880px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-    header {
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 1.25rem 3rem; }
+    .topbar {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
+      align-items: center;
+      padding: 1rem 0;
       border-bottom: 1px solid var(--border);
-      padding-bottom: 1.5rem;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
     }
-    h1 { font-size: 1.75rem; margin: 0 0 .5rem; font-weight: 700; }
-    .tagline { color: var(--muted); margin: 0; font-size: 1.05rem; }
+    .logo { font-weight: 700; font-size: 1rem; letter-spacing: .02em; }
     .lang-switch button {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -50,81 +53,236 @@
       color: #000;
       font-weight: 600;
     }
+    .hero { margin-bottom: 2.5rem; }
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      line-height: 1.2;
+      margin: 0 0 .75rem;
+      font-weight: 800;
+    }
+    .hero .lead {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 0 1.25rem;
+    }
+    .badges { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
+    .badge {
+      display: inline-block;
+      font-size: .8rem;
+      font-weight: 600;
+      padding: .3rem .65rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .badge.status { border-color: var(--warn); color: var(--warn); }
+    .badge.use { border-color: var(--accent2); color: var(--accent2); }
+    .cta-row { display: flex; flex-wrap: wrap; gap: .75rem; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .65rem 1.15rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: .95rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none !important;
+    }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--accent); }
     section {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.25rem 1.5rem;
+      border-radius: 14px;
+      padding: 1.35rem 1.5rem;
       margin-bottom: 1.25rem;
     }
-    h2 { font-size: 1.1rem; margin: 0 0 .75rem; color: var(--accent2); }
+    h2 {
+      font-size: 1.05rem;
+      margin: 0 0 .85rem;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      font-weight: 700;
+    }
     p { margin: 0 0 .75rem; }
     p:last-child { margin-bottom: 0; }
-    ul { margin: .5rem 0 0; padding-left: 1.25rem; }
-    li { margin: .35rem 0; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    code, pre {
-      font-family ui-monospace, SFMono-Regular, Menlo, monospace;
+    ul.feature-list { margin: 0; padding-left: 1.2rem; }
+    ul.feature-list li { margin: .4rem 0; }
+    .purpose {
+      background: var(--surface2);
+      border-left: 3px solid var(--accent);
+      padding: .85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      color: var(--muted);
+      font-size: .95rem;
+      margin-top: .5rem;
+    }
+    .demo-frame {
+      margin-top: .75rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #1a1a1a;
+    }
+    .demo-chrome {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .55rem .85rem;
+      background: #2d2d2d;
+      border-bottom: 1px solid #444;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #ff5f57; }
+    .dot.y { background: #febc2e; }
+    .dot.g { background: #28c840; }
+    .demo-url {
+      flex: 1;
+      margin-left: .5rem;
+      font-size: .75rem;
+      color: #aaa;
+      font-family: ui-monospace, monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .demo-viewport {
+      height: 340px;
+      overflow: hidden;
+      background: #f6f7f9;
+      position: relative;
+    }
+    .demo-viewport iframe {
+      width: 200%;
+      height: 680px;
+      border: 0;
+      transform: scale(0.5);
+      transform-origin: top left;
+      pointer-events: none;
+    }
+    .demo-caption {
+      margin-top: .65rem;
       font-size: .875rem;
+      color: var(--muted);
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: .75rem;
+    }
+    .contact-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .85rem 1rem;
+    }
+    .contact-card strong { display: block; font-size: .8rem; color: var(--muted); margin-bottom: .25rem; }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .85rem;
     }
     pre {
-      background: #0d1117;
+      background: #080b10;
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 1rem;
       overflow-x: auto;
       margin: .75rem 0 0;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: .75rem;
-      margin-top: .75rem;
-    }
-    .card {
-      background: #0d1117;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: .85rem 1rem;
-    }
-    .card strong { display: block; margin-bottom: .25rem; }
-    footer {
+    .legal {
       margin-top: 2rem;
-      padding-top: 1rem;
+      padding: 1.25rem 0 0;
       border-top: 1px solid var(--border);
-      color: var(--muted);
+      color: var(--legal);
+      font-size: .85rem;
+    }
+    .legal p { margin-bottom: .5rem; }
+    footer {
+      margin-top: 1rem;
       font-size: .875rem;
+      color: var(--muted);
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div>
-        <h1><span data-i18n="title">Flight Route Evaluator</span></h1>
-        <p class="tagline" data-i18n="tagline">оценка маршрутов по YAML-конфигу</p>
-      </div>
+    <div class="topbar">
+      <div class="logo">Flight Route Evaluator</div>
       <div class="lang-switch">
-        <button id="btn-ru" class="active" type="button" onclick="setLang('ru')">RU</button>
-        <button id="btn-en" type="button" onclick="setLang('en')">EN</button>
+        <button id="btn-en" class="active" type="button" onclick="setLang('en')">EN</button>
+        <button id="btn-ru" type="button" onclick="setLang('ru')">RU</button>
       </div>
-    </header>
+    </div>
+
+    <div class="hero">
+      <h1 data-i18n="hero_title">Flight Route Evaluator</h1>
+      <p class="lead" data-i18n="hero_lead">
+        Expedition logistics tool for evaluating flight routes to Nepal.
+        Compares predefined routes by price, baggage allowance, connection risk, and visa constraints.
+      </p>
+      <div class="badges">
+        <span class="badge status" data-i18n="badge_status">Project status: MVP in development</span>
+        <span class="badge use" data-i18n="badge_use">Trekking &amp; mountaineering travel planning</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/kneumoin/Flight-Route-Evaluator" data-i18n="cta_github">View on GitHub</a>
+        <a class="btn btn-secondary" href="demo-report.html" data-i18n="cta_demo">View sample report</a>
+      </div>
+    </div>
 
     <section>
-      <h2 data-i18n="about_h">О проекте</h2>
-      <p data-i18n="about_p">
-        CLI-инструмент на Go для сравнения заранее заданных маршрутов перелёта
-        из YAML-конфига (не произвольный поиск). Оценивает цену, стыковки, багаж,
-        визовые риски и формирует двуязычный HTML-отчёт.
+      <h2 data-i18n="features_h">Features</h2>
+      <ul class="feature-list">
+        <li data-i18n="f1">Compares predefined route branches from config (e.g. MOW → KTM via hub cities)</li>
+        <li data-i18n="f2">Evaluates baggage allowance, visa risk, and connection timing</li>
+        <li data-i18n="f3">Generates bilingual HTML reports (RU / EN), plus CSV and JSON</li>
+        <li data-i18n="f4">Integrates flight pricing APIs (Travelpayouts / Aviasales, Kiwi) with filesystem cache</li>
+        <li data-i18n="f5">Mock mode for offline development without API keys</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 data-i18n="purpose_h">Purpose</h2>
+      <p data-i18n="purpose_p">
+        We are building a route evaluation tool for expedition logistics — trekking and mountaineering travel to Nepal.
+        The tool compares predefined routes by price, baggage allowance, connection risk, and visa constraints.
+      </p>
+      <div class="purpose" data-i18n="purpose_api">
+        Travelpayouts API is used for flight availability and pricing data. This is an analytics and planning tool, not a ticket shop.
+      </div>
+    </section>
+
+    <section>
+      <h2 data-i18n="demo_h">Sample report</h2>
+      <p data-i18n="demo_p">Mock evaluation output — same HTML report the CLI generates after a run.</p>
+      <div class="demo-frame">
+        <div class="demo-chrome">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="demo-url">kneumoin.github.io/Flight-Route-Evaluator/demo-report.html</span>
+        </div>
+        <div class="demo-viewport">
+          <iframe src="demo-report.html" title="Sample route evaluation report" loading="lazy"></iframe>
+        </div>
+      </div>
+      <p class="demo-caption">
+        <a href="demo-report.html" data-i18n="demo_link">Open full sample report →</a>
       </p>
     </section>
 
     <section>
-      <h2 data-i18n="quick_h">Быстрый старт</h2>
-      <pre><code>git clone https://github.com/kneumoin/nepal.git
-cd nepal
-go test ./...
+      <h2 data-i18n="quick_h">Quick start</h2>
+      <pre><code>git clone https://github.com/kneumoin/Flight-Route-Evaluator.git
+cd Flight-Route-Evaluator
 go run ./cmd/flight-routes \
   --config configs/routes.yaml \
   --out ./out \
@@ -133,83 +291,88 @@ open ./out/report.html</code></pre>
     </section>
 
     <section>
-      <h2 data-i18n="docs_h">Документация</h2>
-      <div class="grid">
-        <div class="card">
-          <strong>SPEC.md</strong>
-          <a href="https://github.com/kneumoin/nepal/blob/main/SPEC.md" data-i18n="spec_link">Техническое задание</a>
+      <h2 data-i18n="contact_h">Contact</h2>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <strong data-i18n="contact_email_label">Email</strong>
+          <a href="mailto:kneumoin@gmail.com">kneumoin@gmail.com</a>
         </div>
-        <div class="card">
-          <strong>README.md</strong>
-          <a href="https://github.com/kneumoin/nepal/blob/main/README.md" data-i18n="readme_link">Установка и запуск</a>
-        </div>
-        <div class="card">
-          <strong>IMPLEMENTATION_PLAN.md</strong>
-          <a href="https://github.com/kneumoin/nepal/blob/main/IMPLEMENTATION_PLAN.md" data-i18n="plan_link">План реализации</a>
-        </div>
-        <div class="card">
-          <strong>TASKS.yaml</strong>
-          <a href="https://github.com/kneumoin/nepal/blob/main/TASKS.yaml" data-i18n="tasks_link">Доска задач</a>
+        <div class="contact-card">
+          <strong data-i18n="contact_repo_label">Source code</strong>
+          <a href="https://github.com/kneumoin/Flight-Route-Evaluator">github.com/kneumoin/Flight-Route-Evaluator</a>
         </div>
       </div>
     </section>
 
-    <section>
-      <h2 data-i18n="features_h">Возможности MVP</h2>
-      <ul>
-        <li data-i18n="f1">Только ветки из YAML-конфига (one-stop / self-transfer)</li>
-        <li data-i18n="f2">Mock-режим без API-ключей (<code>--provider mock</code>)</li>
-        <li data-i18n="f3">Отчёты: HTML (RU/EN), CSV, JSON</li>
-        <li data-i18n="f4">Провайдеры: mock, Aviasales, Kiwi (stub)</li>
-        <li data-i18n="f5">Файловый кэш — без базы данных</li>
-      </ul>
-    </section>
+    <div class="legal">
+      <p data-i18n="legal1"><strong>Disclaimer:</strong> This project does not sell tickets or process payments.</p>
+      <p data-i18n="legal2">It only analyzes publicly available flight data for expedition route planning.</p>
+      <p data-i18n="legal3">No personal data is collected on this website.</p>
+    </div>
 
     <footer>
-      <span data-i18n="footer">Репозиторий:</span>
-      <a href="https://github.com/kneumoin/nepal">github.com/kneumoin/nepal</a>
+      <span data-i18n="footer">Open-source project ·</span>
+      <a href="https://github.com/kneumoin/Flight-Route-Evaluator">GitHub</a>
     </footer>
   </div>
 
   <script>
     const i18n = {
-      ru: {
-        title: "Flight Route Evaluator",
-        tagline: "оценка маршрутов по YAML-конфигу",
-        about_h: "О проекте",
-        about_p: "CLI-инструмент на Go для сравнения заранее заданных маршрутов перелёта из YAML-конфига (не произвольный поиск). Оценивает цену, стыковки, багаж, визовые риски и формирует двуязычный HTML-отчёт.",
-        quick_h: "Быстрый старт",
-        docs_h: "Документация",
-        spec_link: "Техническое задание",
-        readme_link: "Установка и запуск",
-        plan_link: "План реализации",
-        tasks_link: "Доска задач",
-        features_h: "Возможности MVP",
-        f1: "Только ветки из YAML-конфига (one-stop / self-transfer)",
-        f2: "Mock-режим без API-ключей (--provider mock)",
-        f3: "Отчёты: HTML (RU/EN), CSV, JSON",
-        f4: "Провайдеры: mock, Aviasales, Kiwi (stub)",
-        f5: "Файловый кэш — без базы данных",
-        footer: "Репозиторий:"
-      },
       en: {
-        title: "Flight Route Evaluator",
-        tagline: "YAML-config-driven route evaluation",
-        about_h: "About",
-        about_p: "Go CLI to compare predefined flight route branches from a YAML config (not arbitrary search). Evaluates price, connections, baggage, visa risk, and produces a bilingual HTML report.",
+        hero_title: "Flight Route Evaluator",
+        hero_lead: "Expedition logistics tool for evaluating flight routes to Nepal. Compares predefined routes by price, baggage allowance, connection risk, and visa constraints.",
+        badge_status: "Project status: MVP in development",
+        badge_use: "Trekking & mountaineering travel planning",
+        cta_github: "View on GitHub",
+        cta_demo: "View sample report",
+        features_h: "Features",
+        f1: "Compares predefined route branches from config (e.g. MOW → KTM via hub cities)",
+        f2: "Evaluates baggage allowance, visa risk, and connection timing",
+        f3: "Generates bilingual HTML reports (RU / EN), plus CSV and JSON",
+        f4: "Integrates flight pricing APIs (Travelpayouts / Aviasales, Kiwi) with filesystem cache",
+        f5: "Mock mode for offline development without API keys",
+        purpose_h: "Purpose",
+        purpose_p: "We are building a route evaluation tool for expedition logistics — trekking and mountaineering travel to Nepal. The tool compares predefined routes by price, baggage allowance, connection risk, and visa constraints.",
+        purpose_api: "Travelpayouts API is used for flight availability and pricing data. This is an analytics and planning tool, not a ticket shop.",
+        demo_h: "Sample report",
+        demo_p: "Mock evaluation output — same HTML report the CLI generates after a run.",
+        demo_link: "Open full sample report →",
         quick_h: "Quick start",
-        docs_h: "Documentation",
-        spec_link: "Technical specification",
-        readme_link: "Setup & usage",
-        plan_link: "Implementation plan",
-        tasks_link: "Task board",
-        features_h: "MVP features",
-        f1: "Config-defined branches only (one-stop / self-transfer)",
-        f2: "Mock mode without API keys (--provider mock)",
-        f3: "Reports: HTML (RU/EN), CSV, JSON",
-        f4: "Providers: mock, Aviasales, Kiwi (stub)",
-        f5: "Filesystem cache — no database",
-        footer: "Repository:"
+        contact_h: "Contact",
+        contact_email_label: "Email",
+        contact_repo_label: "Source code",
+        legal1: "Disclaimer: This project does not sell tickets or process payments.",
+        legal2: "It only analyzes publicly available flight data for expedition route planning.",
+        legal3: "No personal data is collected on this website.",
+        footer: "Open-source project ·"
+      },
+      ru: {
+        hero_title: "Flight Route Evaluator",
+        hero_lead: "Инструмент экспедиционной логистики для оценки маршрутов перелёта в Непал. Сравнивает заранее заданные маршруты по цене, багажу, рискам стыковок и визовым ограничениям.",
+        badge_status: "Статус: MVP в разработке",
+        badge_use: "Планирование треккинга и альпинизма",
+        cta_github: "GitHub",
+        cta_demo: "Пример отчёта",
+        features_h: "Возможности",
+        f1: "Сравнение веток маршрутов из конфига (напр. MOW → KTM через хабы)",
+        f2: "Оценка багажа, визовых рисков и времени стыковок",
+        f3: "Двуязычные HTML-отчёты (RU / EN), CSV и JSON",
+        f4: "Интеграция с API цен (Travelpayouts / Aviasales, Kiwi) и файловый кэш",
+        f5: "Mock-режим для разработки без API-ключей",
+        purpose_h: "Назначение",
+        purpose_p: "Мы создаём инструмент оценки маршрутов для экспедиционной логистики — треккинг и альпинизм в Непале. Сравниваются заранее заданные маршруты по цене, багажу, рискам стыковок и визовым ограничениям.",
+        purpose_api: "Travelpayouts API используется для данных о доступности и ценах на перелёты. Это аналитический инструмент планирования, а не продажа билетов.",
+        demo_h: "Пример отчёта",
+        demo_p: "Моковый результат оценки — тот же HTML, что генерирует CLI после запуска.",
+        demo_link: "Открыть полный пример отчёта →",
+        quick_h: "Быстрый старт",
+        contact_h: "Контакты",
+        contact_email_label: "Email",
+        contact_repo_label: "Исходный код",
+        legal1: "Дисклеймер: проект не продаёт билеты и не обрабатывает платежи.",
+        legal2: "Анализируются только публично доступные данные о перелётах для планирования экспедиций.",
+        legal3: "Этот сайт не собирает персональные данные.",
+        footer: "Open-source проект ·"
       }
     };
 
@@ -225,7 +388,7 @@ open ./out/report.html</code></pre>
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-      setLang(localStorage.getItem("site-lang") || "ru");
+      setLang(localStorage.getItem("site-lang") || "en");
     });
   </script>
 </body>

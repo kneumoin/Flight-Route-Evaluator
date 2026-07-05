@@ -28,10 +28,3 @@ go run ./cmd/flight-routes \
   --config configs/routes.yaml \
   --out ./out
 ```
-
-## Docs
-
-- [SPEC.md](SPEC.md)
-- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
-- [TASKS.yaml](TASKS.yaml)
-- [REVIEWER.md](REVIEWER.md)
