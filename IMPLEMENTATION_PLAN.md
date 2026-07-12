@@ -254,6 +254,10 @@ Stage 4: Local price history (JSONL append + report dynamics)
 
 Never implement Stage 2 real API calls before Stage 1 mock pipeline and tests are green.
 
+**Post-MVP provider (s2-t08):** `travelpayouts_data` uses Travelpayouts Data API (`/v1/prices/cheap`, `/v2/prices/latest`) for **cached** prices only — not live search. Token via `TRAVELPAYOUTS_TOKEN` or `--travelpayouts-token` at runtime only; secret leakage is a blocker-level bug.
+
+**Experimental (s2-t09):** `aviasales_browser` — local-only headful browser collector (chromedp). Explicit `--provider aviasales_browser` only; never in CI/golden tests. No manual provider.
+
 ---
 
 ## Progress reporting format

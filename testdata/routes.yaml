@@ -9,9 +9,11 @@ constraints:
   max_stops: 1
   avoid_transfer_visas: true
   allow_self_transfer: true
+  airline_preference_mode: advisory
   baggage:
     checked_required: true
     min_checked_kg: 23
+    allow_unknown_for_cached_provider: true
 
 cache:
   enabled: false

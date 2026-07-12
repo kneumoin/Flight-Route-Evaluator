@@ -17,6 +17,12 @@ func testScoringConfig() config.ScoringConfig {
 	}
 }
 
+func testOperationalRisk() config.OperationalDisruptionConfig {
+	c := config.OperationalDisruptionConfig{Enabled: true, DefaultLevel: "LOW"}
+	c.Normalize()
+	return c
+}
+
 func testConstraints() config.ConstraintsConfig {
 	return config.ConstraintsConfig{
 		Baggage: config.BaggageConfig{CheckedRequired: true, MinCheckedKg: 23},

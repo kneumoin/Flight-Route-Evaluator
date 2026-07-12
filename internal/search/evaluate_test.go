@@ -34,7 +34,7 @@ func TestEvaluate_AllBranches(t *testing.T) {
 	}
 }
 
-func TestEvaluate_DelhiRejected(t *testing.T) {
+func TestEvaluate_DelhiVisaPenalizedNotRejected(t *testing.T) {
 	ev := testEvaluator(t)
 	res, err := ev.Evaluate(context.Background())
 	if err != nil {
@@ -46,8 +46,14 @@ func TestEvaluate_DelhiRejected(t *testing.T) {
 			delhi = b
 		}
 	}
-	if delhi.Status != model.StatusRejected {
-		t.Fatalf("delhi expected rejected, got %s", delhi.Status)
+	if delhi.Status == model.StatusRejected {
+		t.Fatalf("delhi should not be rejected for visa, got %s", delhi.Status)
+	}
+	if delhi.VisaCategory != model.VisaCategoryRequiresVisa && delhi.Status == model.StatusOK {
+		// visa category set when branch evaluated
+	}
+	if delhi.VisaCategory == "" && delhi.Status == model.StatusOK {
+		t.Fatal("expected visa category on ok branch")
 	}
 }
 

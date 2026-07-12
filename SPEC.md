@@ -162,9 +162,37 @@ Example:
 
 Multiple providers supported. Examples:
 
-- Aviasales / Travelpayouts
+- **travelpayouts_data** — Travelpayouts / Aviasales **Data API** (cached prices; preferred real provider)
+- aviasales — legacy provider id (same API family; superseded by `travelpayouts_data`)
 - Kiwi.com
-- Amadeus
+- Amadeus (out of MVP scope)
+
+### travelpayouts_data (cached Data API)
+
+Provider id: `travelpayouts_data`. **Not** real-time search.
+
+| Property | Value |
+|----------|-------|
+| Env | `TRAVELPAYOUTS_TOKEN` (preferred); `AVIASALES_TOKEN` alias; optional CLI `--travelpayouts-token` |
+| Endpoints | `GET /v1/prices/cheap`, `GET /v2/prices/latest` |
+| DataQuality | `cached` on all offers |
+| Baggage | always unknown (`CheckedBaggageKg = nil`); use `constraints.baggage.allow_unknown_for_cached_provider` |
+| Secret handling | **Never** hardcode, commit, cache, log, or report the token. Secret leakage is a blocker-level bug. |
+
+Capabilities: `AirlineCoverageMode: unknown`, `SupportsBaggageInfo: false`, `SupportsRealTimePricing: false`.
+
+Reports must label cached data (RU/EN): cached price, baggage unknown, schedule may be incomplete.
+
+### aviasales_browser (experimental, local-only)
+
+Provider id: `aviasales_browser`. **Not** for CI, golden tests, or default config.
+
+| Property | Value |
+|----------|-------|
+| Selection | Explicit CLI only: `--provider aviasales_browser` |
+| Browser | Headful Chrome via chromedp; default rate 1 req/min |
+| DataQuality | `browser_collected` |
+| Safety | No captcha bypass, no anti-bot, no login automation, no parallel browser requests |
 
 ### Provider selection (MVP decision)
 

@@ -15,8 +15,11 @@ func TestLoad_Valid(t *testing.T) {
 		}
 		t.Fatal(err)
 	}
-	if len(cfg.Branches) != 5 {
-		t.Fatalf("expected 5 branches, got %d", len(cfg.Branches))
+	if len(cfg.Branches) < 10 {
+		t.Fatalf("expected at least 10 branches, got %d", len(cfg.Branches))
+	}
+	if cfg.Constraints.AirlinePreferenceMode != AirlinePreferenceAdvisory {
+		t.Fatalf("expected advisory mode, got %q", cfg.Constraints.AirlinePreferenceMode)
 	}
 }
 

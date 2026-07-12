@@ -47,7 +47,48 @@
         "connection_duration": 14400000000000,
         "checked_baggage_kg": 30,
         "self_transfer": false,
-        "visa_risk": "LOW"
+        "visa_risk": "LOW",
+        "data_quality": "mock",
+        "timing_verified": true,
+        "connection_verified": true,
+        "leg_details": [
+          {
+            "from": "MOW",
+            "to": "IST",
+            "search_date": "2026-09-28",
+            "airline": "TK",
+            "flight_number": "TK500",
+            "departure": "2026-09-28T10:00:00+03:00",
+            "arrival": "2026-09-28T14:00:00+03:00",
+            "price": {
+              "amount": 78000,
+              "currency": "USD"
+            },
+            "provider": "mock",
+            "timing_verified": true,
+            "available_airlines": [
+              "TK"
+            ]
+          },
+          {
+            "from": "IST",
+            "to": "KTM",
+            "search_date": "2026-09-28",
+            "airline": "TK",
+            "flight_number": "TK501",
+            "departure": "2026-09-28T18:00:00+03:00",
+            "arrival": "2026-09-29T00:00:00+05:45",
+            "price": {
+              "amount": 42000,
+              "currency": "USD"
+            },
+            "provider": "mock",
+            "timing_verified": true,
+            "available_airlines": [
+              "TK"
+            ]
+          }
+        ]
       },
       "score": 81.50000000000001,
       "breakdown": {
@@ -62,7 +103,48 @@
       },
       "providers": [
         "mock"
-      ]
+      ],
+      "visa_category": "LOW",
+      "price_comparison": {
+        "price_target": {
+          "amount": 120000,
+          "currency": "USD"
+        },
+        "price_target_currency": "USD",
+        "price_minus_1": {
+          "amount": 120000,
+          "currency": "USD"
+        },
+        "price_plus_1": {
+          "amount": 120000,
+          "currency": "USD"
+        },
+        "price_window_min": {
+          "amount": 120000,
+          "currency": "USD"
+        },
+        "price_window_min_date": "2026-09-14",
+        "price_window_days": 14
+      },
+      "leg_airlines": [
+        {
+          "from": "MOW",
+          "to": "IST",
+          "target_date": "2026-09-28",
+          "available_airlines": [
+            "TK"
+          ]
+        },
+        {
+          "from": "IST",
+          "to": "KTM",
+          "target_date": "2026-09-28",
+          "available_airlines": [
+            "TK"
+          ]
+        }
+      ],
+      "operational_disruption_risk": "LOW"
     },
     {
       "branch_id": "qatar_doha",
@@ -103,7 +185,48 @@
         "connection_duration": 10800000000000,
         "checked_baggage_kg": 30,
         "self_transfer": false,
-        "visa_risk": "LOW"
+        "visa_risk": "LOW",
+        "data_quality": "mock",
+        "timing_verified": true,
+        "connection_verified": true,
+        "leg_details": [
+          {
+            "from": "MOW",
+            "to": "DOH",
+            "search_date": "2026-09-28",
+            "airline": "QR",
+            "flight_number": "QR001",
+            "departure": "2026-09-28T08:00:00+03:00",
+            "arrival": "2026-09-28T13:00:00+03:00",
+            "price": {
+              "amount": 85000,
+              "currency": "USD"
+            },
+            "provider": "mock",
+            "timing_verified": true,
+            "available_airlines": [
+              "QR"
+            ]
+          },
+          {
+            "from": "DOH",
+            "to": "KTM",
+            "search_date": "2026-09-28",
+            "airline": "QR",
+            "flight_number": "QR002",
+            "departure": "2026-09-28T16:00:00+03:00",
+            "arrival": "2026-09-28T20:00:00+05:45",
+            "price": {
+              "amount": 0,
+              "currency": "USD"
+            },
+            "provider": "mock",
+            "timing_verified": true,
+            "available_airlines": [
+              "QR"
+            ]
+          }
+        ]
       },
       "score": 81.37500000000001,
       "breakdown": {
@@ -118,7 +241,186 @@
       },
       "providers": [
         "mock"
-      ]
+      ],
+      "visa_category": "LOW",
+      "price_comparison": {
+        "price_target": {
+          "amount": 85000,
+          "currency": "USD"
+        },
+        "price_target_currency": "USD",
+        "price_minus_1": {
+          "amount": 85000,
+          "currency": "USD"
+        },
+        "price_plus_1": {
+          "amount": 85000,
+          "currency": "USD"
+        },
+        "price_window_min": {
+          "amount": 85000,
+          "currency": "USD"
+        },
+        "price_window_min_date": "2026-09-14",
+        "price_window_days": 14
+      },
+      "leg_airlines": [
+        {
+          "from": "MOW",
+          "to": "DOH",
+          "target_date": "2026-09-28",
+          "available_airlines": [
+            "QR"
+          ]
+        },
+        {
+          "from": "DOH",
+          "to": "KTM",
+          "target_date": "2026-09-28",
+          "available_airlines": [
+            "QR"
+          ]
+        }
+      ],
+      "operational_disruption_risk": "LOW"
+    },
+    {
+      "branch_id": "aeroflot_dubai_flydubai",
+      "branch_name": "Aeroflot + Flydubai via Dubai",
+      "status": "ok",
+      "offer": {
+        "branch_id": "aeroflot_dubai_flydubai",
+        "provider": "mock+mock",
+        "segments": [
+          {
+            "from": "MOW",
+            "to": "DXB",
+            "departure": "2026-09-28T09:00:00+03:00",
+            "arrival": "2026-09-28T14:00:00+04:00",
+            "airline": "SU",
+            "flight_number": "SU100",
+            "duration": 18000000000000
+          },
+          {
+            "from": "DXB",
+            "to": "KTM",
+            "departure": "2026-09-28T23:00:00+04:00",
+            "arrival": "2026-09-29T03:00:00+05:45",
+            "airline": "FZ",
+            "flight_number": "FZ200",
+            "duration": 14400000000000
+          }
+        ],
+        "price": {
+          "amount": 7235000,
+          "currency": "RUB"
+        },
+        "price_normalized": {
+          "amount": 79584,
+          "currency": "USD"
+        },
+        "total_duration": 64800000000000,
+        "connection_duration": 32400000000000,
+        "checked_baggage_kg": 25,
+        "self_transfer": true,
+        "visa_risk": "LOW",
+        "data_quality": "mock",
+        "timing_verified": true,
+        "connection_verified": true,
+        "leg_details": [
+          {
+            "from": "MOW",
+            "to": "DXB",
+            "search_date": "2026-09-28",
+            "airline": "SU",
+            "flight_number": "SU100",
+            "departure": "2026-09-28T09:00:00+03:00",
+            "arrival": "2026-09-28T14:00:00+04:00",
+            "price": {
+              "amount": 7200000,
+              "currency": "RUB"
+            },
+            "provider": "mock",
+            "timing_verified": true,
+            "available_airlines": [
+              "SU"
+            ]
+          },
+          {
+            "from": "DXB",
+            "to": "KTM",
+            "search_date": "2026-09-28",
+            "airline": "FZ",
+            "flight_number": "FZ200",
+            "departure": "2026-09-28T23:00:00+04:00",
+            "arrival": "2026-09-29T03:00:00+05:45",
+            "price": {
+              "amount": 35000,
+              "currency": "USD"
+            },
+            "provider": "mock",
+            "timing_verified": true,
+            "available_airlines": [
+              "FZ"
+            ]
+          }
+        ]
+      },
+      "score": 77.55200000000002,
+      "breakdown": {
+        "price": 60.208,
+        "duration": 64,
+        "baggage": 100,
+        "visa": 100,
+        "self_transfer": 60,
+        "late_arrival": 100,
+        "penalties": 0,
+        "total": 77.55200000000002
+      },
+      "providers": [
+        "mock"
+      ],
+      "visa_category": "LOW",
+      "price_comparison": {
+        "price_target": {
+          "amount": 79584,
+          "currency": "USD"
+        },
+        "price_target_currency": "USD",
+        "price_minus_1": {
+          "amount": 114200,
+          "currency": "USD"
+        },
+        "price_plus_1": {
+          "amount": 114200,
+          "currency": "USD"
+        },
+        "price_window_min": {
+          "amount": 114200,
+          "currency": "USD"
+        },
+        "price_window_min_date": "2026-09-14",
+        "price_window_days": 14
+      },
+      "leg_airlines": [
+        {
+          "from": "MOW",
+          "to": "DXB",
+          "target_date": "2026-09-28",
+          "available_airlines": [
+            "SU"
+          ]
+        },
+        {
+          "from": "DXB",
+          "to": "KTM",
+          "target_date": "2026-09-28",
+          "available_airlines": [
+            "FZ"
+          ]
+        }
+      ],
+      "operational_disruption_risk": "LOW"
     },
     {
       "branch_id": "china_chengdu",
@@ -159,85 +461,326 @@
         "connection_duration": 21600000000000,
         "checked_baggage_kg": 30,
         "self_transfer": false,
-        "visa_risk": "LOW"
+        "visa_risk": "MEDIUM",
+        "data_quality": "mock",
+        "timing_verified": true,
+        "connection_verified": true,
+        "leg_details": [
+          {
+            "from": "MOW",
+            "to": "TFU",
+            "search_date": "2026-09-28",
+            "airline": "CA",
+            "flight_number": "CA600",
+            "departure": "2026-09-28T06:00:00+03:00",
+            "arrival": "2026-09-28T14:00:00+08:00",
+            "price": {
+              "amount": 65000,
+              "currency": "USD"
+            },
+            "provider": "mock",
+            "timing_verified": true,
+            "available_airlines": [
+              "CA"
+            ]
+          },
+          {
+            "from": "TFU",
+            "to": "KTM",
+            "search_date": "2026-09-28",
+            "airline": "CA",
+            "flight_number": "CA601",
+            "departure": "2026-09-28T20:00:00+08:00",
+            "arrival": "2026-09-28T23:00:00+05:45",
+            "price": {
+              "amount": 28000,
+              "currency": "USD"
+            },
+            "provider": "mock",
+            "timing_verified": true,
+            "available_airlines": [
+              "CA"
+            ]
+          }
+        ]
       },
-      "score": 79.12500000000001,
+      "score": 71.62500000000001,
       "breakdown": {
         "price": 53.5,
         "duration": 66,
         "baggage": 100,
-        "visa": 100,
+        "visa": 70,
         "self_transfer": 100,
         "late_arrival": 50,
         "penalties": 0,
-        "total": 79.12500000000001
+        "total": 71.62500000000001
       },
       "providers": [
         "mock"
+      ],
+      "visa_category": "MEDIUM",
+      "price_comparison": {
+        "price_target": {
+          "amount": 93000,
+          "currency": "USD"
+        },
+        "price_target_currency": "USD",
+        "price_minus_1": {
+          "amount": 93000,
+          "currency": "USD"
+        },
+        "price_plus_1": {
+          "amount": 93000,
+          "currency": "USD"
+        },
+        "price_window_min": {
+          "amount": 93000,
+          "currency": "USD"
+        },
+        "price_window_min_date": "2026-09-14",
+        "price_window_days": 14
+      },
+      "leg_airlines": [
+        {
+          "from": "MOW",
+          "to": "TFU",
+          "target_date": "2026-09-28",
+          "available_airlines": [
+            "CA"
+          ]
+        },
+        {
+          "from": "TFU",
+          "to": "KTM",
+          "target_date": "2026-09-28",
+          "available_airlines": [
+            "CA"
+          ]
+        }
+      ],
+      "operational_disruption_risk": "LOW"
+    },
+    {
+      "branch_id": "delhi_mixed",
+      "branch_name": "Via Delhi",
+      "status": "partial",
+      "reason_codes": [
+        "PARTIAL_ROUTE_DATA"
+      ],
+      "providers": [
+        "mock"
+      ],
+      "visa_category": "REQUIRES_VISA",
+      "price_comparison": {
+        "price_window_days": 14
+      },
+      "leg_airlines": [
+        {
+          "from": "MOW",
+          "to": "DEL",
+          "target_date": "2026-09-28",
+          "available_airlines": [
+            "SU"
+          ]
+        },
+        {
+          "from": "DEL",
+          "to": "KTM",
+          "target_date": "2026-09-28"
+        }
+      ],
+      "operational_disruption_risk": "LOW"
+    }
+  ],
+  "route_coverage": [
+    {
+      "branch_id": "qatar_doha",
+      "branch_name": "Qatar via Doha",
+      "leg_index": 0,
+      "from": "MOW",
+      "to": "DOH",
+      "target_date": "2026-09-28",
+      "cheapest_date_near_target": "2026-09-28",
+      "min_price": {
+        "amount": 85000,
+        "currency": "USD"
+      },
+      "airline": "QR",
+      "transfers": 0,
+      "coverage_days": 1,
+      "available_airlines": [
+        "QR"
+      ]
+    },
+    {
+      "branch_id": "qatar_doha",
+      "branch_name": "Qatar via Doha",
+      "leg_index": 1,
+      "from": "DOH",
+      "to": "KTM",
+      "target_date": "2026-09-28",
+      "cheapest_date_near_target": "2026-09-28",
+      "min_price": {
+        "amount": 0,
+        "currency": "USD"
+      },
+      "airline": "QR",
+      "transfers": 0,
+      "coverage_days": 1,
+      "available_airlines": [
+        "QR"
       ]
     },
     {
       "branch_id": "aeroflot_dubai_flydubai",
       "branch_name": "Aeroflot + Flydubai via Dubai",
-      "status": "ok",
-      "offer": {
-        "branch_id": "aeroflot_dubai_flydubai",
-        "provider": "mock+mock",
-        "segments": [
-          {
-            "from": "MOW",
-            "to": "DXB",
-            "departure": "2026-09-28T09:00:00+03:00",
-            "arrival": "2026-09-28T14:00:00+04:00",
-            "airline": "SU",
-            "flight_number": "SU100",
-            "duration": 18000000000000
-          },
-          {
-            "from": "DXB",
-            "to": "KTM",
-            "departure": "2026-09-28T23:00:00+04:00",
-            "arrival": "2026-09-29T03:00:00+05:45",
-            "airline": "FZ",
-            "flight_number": "FZ200",
-            "duration": 14400000000000
-          }
-        ],
-        "price": {
-          "amount": 7200000,
-          "currency": "RUB"
-        },
-        "price_normalized": {
-          "amount": 79200,
-          "currency": "USD"
-        },
-        "total_duration": 64800000000000,
-        "connection_duration": 32400000000000,
-        "checked_baggage_kg": 25,
-        "self_transfer": true,
-        "visa_risk": "LOW"
+      "leg_index": 0,
+      "from": "MOW",
+      "to": "DXB",
+      "target_date": "2026-09-28",
+      "cheapest_date_near_target": "2026-09-28",
+      "min_price": {
+        "amount": 7200000,
+        "currency": "RUB"
       },
-      "score": 77.60000000000002,
-      "breakdown": {
-        "price": 60.4,
-        "duration": 64,
-        "baggage": 100,
-        "visa": 100,
-        "self_transfer": 60,
-        "late_arrival": 100,
-        "penalties": 0,
-        "total": 77.60000000000002
+      "airline": "SU",
+      "transfers": 0,
+      "coverage_days": 1,
+      "available_airlines": [
+        "SU"
+      ]
+    },
+    {
+      "branch_id": "aeroflot_dubai_flydubai",
+      "branch_name": "Aeroflot + Flydubai via Dubai",
+      "leg_index": 1,
+      "from": "DXB",
+      "to": "KTM",
+      "target_date": "2026-09-28",
+      "cheapest_date_near_target": "2026-09-28",
+      "min_price": {
+        "amount": 35000,
+        "currency": "USD"
       },
-      "providers": [
-        "mock"
+      "airline": "FZ",
+      "transfers": 0,
+      "coverage_days": 1,
+      "available_airlines": [
+        "FZ"
       ]
     },
     {
       "branch_id": "delhi_mixed",
       "branch_name": "Via Delhi",
-      "status": "rejected",
-      "reason_codes": [
-        "TRANSIT_VISA_REQUIRED"
+      "leg_index": 0,
+      "from": "MOW",
+      "to": "DEL",
+      "target_date": "2026-09-28",
+      "cheapest_date_near_target": "2026-09-28",
+      "min_price": {
+        "amount": 6800000,
+        "currency": "RUB"
+      },
+      "airline": "SU",
+      "transfers": 0,
+      "coverage_days": 1,
+      "available_airlines": [
+        "SU"
+      ]
+    },
+    {
+      "branch_id": "delhi_mixed",
+      "branch_name": "Via Delhi",
+      "leg_index": 1,
+      "from": "DEL",
+      "to": "KTM",
+      "target_date": "2026-09-28",
+      "cheapest_date_near_target": "2026-09-28",
+      "min_price": {
+        "amount": 18000,
+        "currency": "USD"
+      },
+      "airline": "AI",
+      "transfers": 0,
+      "coverage_days": 1,
+      "available_airlines": [
+        "AI"
+      ]
+    },
+    {
+      "branch_id": "istanbul",
+      "branch_name": "Via Istanbul",
+      "leg_index": 0,
+      "from": "MOW",
+      "to": "IST",
+      "target_date": "2026-09-28",
+      "cheapest_date_near_target": "2026-09-28",
+      "min_price": {
+        "amount": 78000,
+        "currency": "USD"
+      },
+      "airline": "TK",
+      "transfers": 0,
+      "coverage_days": 1,
+      "available_airlines": [
+        "TK"
+      ]
+    },
+    {
+      "branch_id": "istanbul",
+      "branch_name": "Via Istanbul",
+      "leg_index": 1,
+      "from": "IST",
+      "to": "KTM",
+      "target_date": "2026-09-28",
+      "cheapest_date_near_target": "2026-09-28",
+      "min_price": {
+        "amount": 42000,
+        "currency": "USD"
+      },
+      "airline": "TK",
+      "transfers": 0,
+      "coverage_days": 1,
+      "available_airlines": [
+        "TK"
+      ]
+    },
+    {
+      "branch_id": "china_chengdu",
+      "branch_name": "Via Chengdu",
+      "leg_index": 0,
+      "from": "MOW",
+      "to": "TFU",
+      "target_date": "2026-09-28",
+      "cheapest_date_near_target": "2026-09-28",
+      "min_price": {
+        "amount": 65000,
+        "currency": "USD"
+      },
+      "airline": "CA",
+      "transfers": 0,
+      "coverage_days": 1,
+      "available_airlines": [
+        "CA"
+      ]
+    },
+    {
+      "branch_id": "china_chengdu",
+      "branch_name": "Via Chengdu",
+      "leg_index": 1,
+      "from": "TFU",
+      "to": "KTM",
+      "target_date": "2026-09-28",
+      "cheapest_date_near_target": "2026-09-28",
+      "min_price": {
+        "amount": 28000,
+        "currency": "USD"
+      },
+      "airline": "CA",
+      "transfers": 0,
+      "coverage_days": 1,
+      "available_airlines": [
+        "CA"
       ]
     }
   ]

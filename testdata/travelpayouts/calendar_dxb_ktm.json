@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "data": {
+    "2026-09-08": {
+      "origin": "DXB",
+      "destination": "KTM",
+      "airline": "FZ",
+      "departure_at": "2026-09-08T23:00:00+04:00",
+      "price": 174,
+      "flight_number": 575,
+      "transfers": 0
+    },
+    "2026-09-17": {
+      "origin": "DXB",
+      "destination": "KTM",
+      "airline": "AI",
+      "departure_at": "2026-09-17T19:30:00+04:00",
+      "price": 169,
+      "flight_number": 992,
+      "transfers": 1
+    },
+    "2026-09-25": {
+      "origin": "DXB",
+      "destination": "KTM",
+      "airline": "FZ",
+      "departure_at": "2026-09-25T08:00:00+04:00",
+      "price": 180,
+      "flight_number": 576,
+      "transfers": 0
+    }
+  }
+}

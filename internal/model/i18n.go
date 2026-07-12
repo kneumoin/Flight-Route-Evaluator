@@ -24,6 +24,8 @@ var reasonLabels = map[ReasonCode]bilingual{
 	ReasonBaggageUnknown:        {"Неизвестны условия багажа", "Baggage information unknown"},
 	ReasonAPIError:              {"Ошибка API провайдера", "Provider API error"},
 	ReasonCurrencyUnconvertible: {"Валюта не конвертируется", "Currency cannot be converted"},
+	ReasonPartialData:           {"Неполные данные маршрута", "Incomplete route data"},
+	ReasonNoRouteData:           {"Нет данных по маршруту", "No route data from API"},
 }
 
 func AllReasonCodes() []ReasonCode {
@@ -36,5 +38,7 @@ func AllReasonCodes() []ReasonCode {
 		ReasonBaggageUnknown,
 		ReasonAPIError,
 		ReasonCurrencyUnconvertible,
+		ReasonPartialData,
+		ReasonNoRouteData,
 	}
 }

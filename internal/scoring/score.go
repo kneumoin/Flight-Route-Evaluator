@@ -9,21 +9,6 @@ import (
 	"github.com/kneumoin/nepal/internal/model"
 )
 
-var visaRequiredHubs = map[string]bool{
-	"DEL": true,
-}
-
-func RequiresTransitVisa(hubIATA string) bool {
-	return visaRequiredHubs[hubIATA]
-}
-
-func HubFromLegs(legs []config.LegConfig) string {
-	if len(legs) < 2 {
-		return ""
-	}
-	return legs[0].To
-}
-
 func CheckConnection(hours float64, branch config.BranchConfig) []model.ReasonCode {
 	if hours < branch.MinConnectionHours {
 		return []model.ReasonCode{model.ReasonConnectionTooShort}
@@ -34,11 +19,14 @@ func CheckConnection(hours float64, branch config.BranchConfig) []model.ReasonCo
 	return nil
 }
 
-func CheckBaggage(kg *int, c config.ConstraintsConfig) (reject bool, codes []model.ReasonCode) {
+func CheckBaggage(kg *int, dq model.DataQuality, c config.ConstraintsConfig) (reject bool, codes []model.ReasonCode) {
 	if !c.Baggage.CheckedRequired {
 		return false, nil
 	}
 	if kg == nil {
+		if dq.AllowsUnknownBaggage(c.Baggage.AllowUnknownForCachedProvider) {
+			return false, nil
+		}
 		return true, []model.ReasonCode{model.ReasonBaggageUnknown}
 	}
 	if *kg < c.Baggage.MinCheckedKg {
@@ -47,7 +35,7 @@ func CheckBaggage(kg *int, c config.ConstraintsConfig) (reject bool, codes []mod
 	return false, nil
 }
 
-func ScoreOffer(offer model.Offer, branch config.BranchConfig, sc config.ScoringConfig, c config.ConstraintsConfig) (float64, model.ScoreBreakdown) {
+func ScoreOffer(offer model.Offer, branch config.BranchConfig, sc config.ScoringConfig, c config.ConstraintsConfig, hubVisa VisaCategory, disruption model.OperationalDisruptionRisk, riskCfg config.OperationalDisruptionConfig) (float64, model.ScoreBreakdown) {
 	w := sc.Weights
 	if w.Price == 0 {
 		w = config.ScoringWeights{Price: 1, Duration: 0.5, Baggage: 0.3, Visa: 1, SelfTransfer: 0.8, LateArrival: 0.4}
@@ -62,7 +50,11 @@ func ScoreOffer(offer model.Offer, branch config.BranchConfig, sc config.Scoring
 	bagScore := 80.0
 	if c.Baggage.CheckedRequired {
 		if offer.CheckedBaggageKg == nil {
-			bagScore = 0
+			if offer.DataQuality.AllowsUnknownBaggage(c.Baggage.AllowUnknownForCachedProvider) {
+				bagScore = 50 // medium penalty for unknown cached/browser baggage
+			} else {
+				bagScore = 0
+			}
 		} else if *offer.CheckedBaggageKg < c.Baggage.MinCheckedKg {
 			bagScore = 30
 		} else {
@@ -70,11 +62,14 @@ func ScoreOffer(offer model.Offer, branch config.BranchConfig, sc config.Scoring
 		}
 	}
 
-	visaScore := 100.0
-	if offer.VisaRisk == model.RiskHigh {
-		visaScore = 40
-	} else if offer.VisaRisk == model.RiskMedium {
-		visaScore = 70
+	visaScore := VisaScoreForCategory(hubVisa)
+	if hubVisa == "" {
+		visaScore = 100.0
+		if offer.VisaRisk == model.RiskHigh {
+			visaScore = 40
+		} else if offer.VisaRisk == model.RiskMedium {
+			visaScore = 70
+		}
 	}
 
 	selfScore := 100.0
@@ -99,10 +94,15 @@ func ScoreOffer(offer model.Offer, branch config.BranchConfig, sc config.Scoring
 		visaScore*w.Visa + selfScore*w.SelfTransfer + lateScore*w.LateArrival) /
 		(w.Price + w.Duration + w.Baggage + w.Visa + w.SelfTransfer + w.LateArrival)
 
+	regPenalty := OperationalDisruptionPenalty(disruption, riskCfg)
+	total = clamp(total - regPenalty)
+
 	bd := model.ScoreBreakdown{
 		Price: priceScore, Duration: durScore, Baggage: bagScore,
 		Visa: visaScore, SelfTransfer: selfScore, LateArrival: lateScore,
-		Total: total,
+		RegionalDisruptionPenalty: regPenalty,
+		Penalties:                 regPenalty,
+		Total:                     total,
 	}
 	return clamp(total), bd
 }

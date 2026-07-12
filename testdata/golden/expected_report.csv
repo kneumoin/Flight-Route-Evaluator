@@ -1,6 +1,6 @@
-branch_id,branch_name,status,reason_codes,price,currency,price_normalized,duration_minutes,connection_minutes,baggage_kg,visa_risk,self_transfer,score,provider
-istanbul,Via Istanbul,ok,,120000,USD,120000,840,240,30,LOW,false,81.50,mock
-qatar_doha,Qatar via Doha,ok,,85000,USD,85000,720,180,30,LOW,false,81.38,mock
-china_chengdu,Via Chengdu,ok,,93000,USD,93000,1020,360,30,LOW,false,79.13,mock
-aeroflot_dubai_flydubai,Aeroflot + Flydubai via Dubai,ok,,7200000,RUB,79200,1080,540,25,LOW,true,77.60,mock
-delhi_mixed,Via Delhi,rejected,TRANSIT_VISA_REQUIRED,,,,,,,,,,
+branch_id,branch_name,status,reason_codes,price,currency,price_normalized,duration_minutes,connection_minutes,baggage_kg,visa_risk,visa_category,operational_disruption_risk,operational_disruption_penalty,operational_disruption_notes,self_transfer,score,provider,data_quality,notes,leg_airlines,price_target,price_target_currency,price_minus_1,price_plus_1,price_window_min,price_window_min_date,price_window_days
+istanbul,Via Istanbul,ok,,120000,USD,120000,840,240,30,LOW,LOW,LOW,,,false,81.50,mock,mock,,MOW-IST:TK | IST-KTM:TK,120000,USD,120000,120000,120000,2026-09-14,14
+qatar_doha,Qatar via Doha,ok,,85000,USD,85000,720,180,30,LOW,LOW,LOW,,,false,81.38,mock,mock,,MOW-DOH:QR | DOH-KTM:QR,85000,USD,85000,85000,85000,2026-09-14,14
+aeroflot_dubai_flydubai,Aeroflot + Flydubai via Dubai,ok,,7235000,RUB,79584,1080,540,25,LOW,LOW,LOW,,,true,77.55,mock,mock,,MOW-DXB:SU | DXB-KTM:FZ,79584,USD,114200,114200,114200,2026-09-14,14
+china_chengdu,Via Chengdu,ok,,93000,USD,93000,1020,360,30,MEDIUM,MEDIUM,LOW,,,false,71.63,mock,mock,,MOW-TFU:CA | TFU-KTM:CA,93000,USD,93000,93000,93000,2026-09-14,14
+delhi_mixed,Via Delhi,partial,PARTIAL_ROUTE_DATA,,,,,,,,REQUIRES_VISA,LOW,,,,,mock,,,MOW-DEL:SU | DEL-KTM:n/a,,,,,,,14

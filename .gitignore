@@ -1,6 +1,7 @@
 .cache/
 out/
 history/
+bin/
 coverage.out
 *.env
 .env.*

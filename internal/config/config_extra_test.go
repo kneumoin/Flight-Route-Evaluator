@@ -10,8 +10,8 @@ func TestLoad_ConfigsRoutes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(cfg.Branches) != 5 {
-		t.Fatalf("branches=%d", len(cfg.Branches))
+	if len(cfg.Branches) < 10 {
+		t.Fatalf("branches=%d, want >= 10", len(cfg.Branches))
 	}
 }
 

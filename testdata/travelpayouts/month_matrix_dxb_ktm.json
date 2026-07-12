@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "data": [
+    {
+      "depart_date": "2026-09-18",
+      "origin": "DXB",
+      "destination": "KTM",
+      "value": 172,
+      "number_of_changes": 1
+    },
+    {
+      "depart_date": "2026-09-30",
+      "origin": "DXB",
+      "destination": "KTM",
+      "value": 190,
+      "number_of_changes": 0
+    }
+  ]
+}

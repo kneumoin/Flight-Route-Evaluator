@@ -37,7 +37,37 @@ func (p *Provider) Search(ctx context.Context, q model.Query) ([]model.Offer, er
 	}
 	o := offer
 	o.Provider = p.Name()
+	if len(o.Segments) > 0 && o.Segments[0].Airline != "" {
+		o.AvailableAirlines = []string{o.Segments[0].Airline}
+	}
 	return []model.Offer{o}, nil
+}
+
+func (p *Provider) AnalyzeLegCoverage(ctx context.Context, q model.Query) (model.RouteCoverageRow, error) {
+	_ = ctx
+	key := fmt.Sprintf("%s-%s", q.From, q.To)
+	target := q.TargetDate
+	if target == "" {
+		target = q.Date
+	}
+	row := model.RouteCoverageRow{From: q.From, To: q.To, TargetDate: target}
+	offer, ok := legOffers[key]
+	if !ok {
+		return row, nil
+	}
+	row.CoverageDays = 1
+	row.CheapestDateNearTarget = target
+	price := offer.Price
+	row.MinPrice = &price
+	if len(offer.Segments) > 0 {
+		row.Airline = offer.Segments[0].Airline
+		if row.Airline != "" {
+			row.AvailableAirlines = []string{row.Airline}
+		}
+	}
+	zero := 0
+	row.Transfers = &zero
+	return row, nil
 }
 
 var legOffers = map[string]model.Offer{}
@@ -75,6 +105,8 @@ func buildOffers(date string) map[string]model.Offer {
 			TotalDuration:    time.Duration(durH) * time.Hour,
 			CheckedBaggageKg: &b,
 			VisaRisk:         model.RiskLow,
+			DataQuality:      model.DataQualityMock,
+			TimingVerified:   true,
 		}
 	}
 

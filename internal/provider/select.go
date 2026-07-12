@@ -5,14 +5,9 @@ import (
 	"github.com/kneumoin/nepal/internal/model"
 )
 
-type LegContext struct {
-	Leg           config.LegConfig
-	EnabledIDs    map[string]bool
-	Registry      *Registry
-	ProviderHints map[string]bool
-}
-
-func SelectProvider(leg config.LegConfig, enabled []config.ProviderConfig, reg *Registry) (Provider, bool) {
+// SelectProvider picks a provider for a leg. provider_hint is a preference only;
+// if the hinted provider is disabled, selection falls back to other enabled providers.
+func SelectProvider(leg config.LegConfig, enabled []config.ProviderConfig, reg *Registry, prefMode config.AirlinePreferenceMode) (Provider, bool) {
 	enabledMap := make(map[string]bool)
 	for _, p := range enabled {
 		if p.Enabled {
@@ -20,12 +15,12 @@ func SelectProvider(leg config.LegConfig, enabled []config.ProviderConfig, reg *
 		}
 	}
 
-	if leg.ProviderHint != "" {
-		if !enabledMap[leg.ProviderHint] {
-			return nil, false
+	if leg.ProviderHint != "" && enabledMap[leg.ProviderHint] {
+		if p, ok := reg.Get(leg.ProviderHint); ok {
+			if airlineMatch(p.Capabilities(), leg.PreferredAirlines, prefMode) {
+				return p, true
+			}
 		}
-		p, ok := reg.Get(leg.ProviderHint)
-		return p, ok
 	}
 
 	var fallback Provider
@@ -34,7 +29,7 @@ func SelectProvider(leg config.LegConfig, enabled []config.ProviderConfig, reg *
 			continue
 		}
 		caps := p.Capabilities()
-		if matchesPreferred(caps, leg.PreferredAirlines) {
+		if airlineMatch(caps, leg.PreferredAirlines, prefMode) {
 			return p, true
 		}
 		if caps.AirlineCoverageMode == model.CoveragePartial || caps.AirlineCoverageMode == model.CoverageUnknown {
@@ -46,8 +41,12 @@ func SelectProvider(leg config.LegConfig, enabled []config.ProviderConfig, reg *
 	return fallback, fallback != nil
 }
 
-func matchesPreferred(caps ProviderCapabilities, preferred []string) bool {
+func airlineMatch(caps ProviderCapabilities, preferred []string, mode config.AirlinePreferenceMode) bool {
 	if len(preferred) == 0 {
+		return true
+	}
+	if mode == config.AirlinePreferenceAdvisory &&
+		(caps.AirlineCoverageMode == model.CoverageUnknown || caps.AirlineCoverageMode == model.CoveragePartial) {
 		return true
 	}
 	for _, al := range preferred {
@@ -55,20 +54,20 @@ func matchesPreferred(caps ProviderCapabilities, preferred []string) bool {
 			return true
 		}
 	}
+	if caps.AirlineCoverageMode == model.CoverageUnknown || caps.AirlineCoverageMode == model.CoveragePartial {
+		return mode == config.AirlinePreferenceAdvisory
+	}
 	return false
 }
 
-func SUProviderAvailable(preferred []string, enabled []config.ProviderConfig, reg *Registry) bool {
+// WarnSUPreference returns true when SU is preferred but no enabled provider declares SU
+// and all enabled providers have known coverage (informational only; not a hard block).
+func WarnSUPreference(preferred []string, enabled []config.ProviderConfig, reg *Registry) bool {
+	if !prefersSU(preferred) {
+		return false
+	}
 	hasSU := false
-	for _, al := range preferred {
-		if al == "SU" {
-			hasSU = true
-			break
-		}
-	}
-	if !hasSU {
-		return true
-	}
+	hasAdvisory := false
 	for _, pc := range enabled {
 		if !pc.Enabled {
 			continue
@@ -77,7 +76,23 @@ func SUProviderAvailable(preferred []string, enabled []config.ProviderConfig, re
 		if !ok {
 			continue
 		}
-		if p.Capabilities().DeclaresSU() {
+		caps := p.Capabilities()
+		if caps.DeclaresSU() {
+			hasSU = true
+		}
+		if caps.AirlineCoverageMode == model.CoverageUnknown || caps.AirlineCoverageMode == model.CoveragePartial {
+			hasAdvisory = true
+		}
+	}
+	if hasSU || hasAdvisory {
+		return false
+	}
+	return true
+}
+
+func prefersSU(preferred []string) bool {
+	for _, al := range preferred {
+		if al == "SU" {
 			return true
 		}
 	}

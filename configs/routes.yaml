@@ -1,17 +1,25 @@
 trip:
   origin: MOW
   destination: KTM
-  departure_date: 2026-09-28
+  departure_date: 2026-09-26
+  return_date: 2026-11-11
+  return_date_end: 2026-11-15
   passengers: 1
   cabin: economy
 
 constraints:
-  max_stops: 1
-  avoid_transfer_visas: true
+  max_stops: 2
+  avoid_transfer_visas: false
   allow_self_transfer: true
+  airline_preference_mode: advisory
   baggage:
     checked_required: true
     min_checked_kg: 23
+    allow_unknown_for_cached_provider: true
+
+coverage:
+  window_days: 3
+  outbound_forward_days: 6
 
 cache:
   enabled: true
@@ -23,12 +31,14 @@ history:
   directory: history
 
 providers:
+  - id: travelpayouts_data
+    enabled: true
   - id: mock
     enabled: true
   - id: aviasales
-    enabled: true
+    enabled: false
   - id: kiwi
-    enabled: true
+    enabled: false
 
 scoring:
   currency: USD
@@ -41,38 +51,136 @@ scoring:
     late_arrival: 0.4
   late_arrival_after: "18:00"
 
+risk:
+  operational_disruption:
+    enabled: true
+    default_level: LOW
+    penalties:
+      LOW: 0
+      ELEVATED: 5
+      HIGH: 12
+      UNKNOWN: 8
+    hubs:
+      KWI: HIGH
+      DOH: HIGH
+      DXB: HIGH
+      SHJ: HIGH
+      AUH: HIGH
+
 branches:
-  - id: qatar_doha
-    name: Qatar via Doha
-    type: single_ticket
+  - id: via_ist
+    name: Via Istanbul
+    type: mixed_carrier
     visa_policy: airside_only
-    min_connection_hours: 2
-    max_connection_hours: 8
+    min_connection_hours: 3
+    max_connection_hours: 12
     legs:
       - from: MOW
-        to: DOH
-        preferred_airlines: [QR]
-      - from: DOH
+        to: IST
+        preferred_airlines: []
+      - from: IST
         to: KTM
-        preferred_airlines: [QR]
+        preferred_airlines: []
 
-  - id: aeroflot_dubai_flydubai
-    name: Aeroflot + Flydubai via Dubai
-    type: self_transfer
-    visa_policy: no_extra_visa
-    min_connection_hours: 8
-    max_connection_hours: 18
+  - id: via_kwi
+    name: Via Kuwait
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 2
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: KWI
+        preferred_airlines: []
+      - from: KWI
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_dmm
+    name: Via Dammam
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 2
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: DMM
+        preferred_airlines: []
+      - from: DMM
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_ruh
+    name: Via Riyadh
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 2
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: RUH
+        preferred_airlines: []
+      - from: RUH
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_dxb
+    name: Via Dubai
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 3
+    max_connection_hours: 12
     legs:
       - from: MOW
         to: DXB
-        preferred_airlines: [SU]
-        provider_hint: aviasales
+        preferred_airlines: []
       - from: DXB
         to: KTM
-        preferred_airlines: [FZ]
-        provider_hint: kiwi
+        preferred_airlines: []
 
-  - id: delhi_mixed
+  - id: via_shj
+    name: Via Sharjah
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 3
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: SHJ
+        preferred_airlines: []
+      - from: SHJ
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_auh
+    name: Via Abu Dhabi
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 2
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: AUH
+        preferred_airlines: []
+      - from: AUH
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_doh
+    name: Via Doha
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 2
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: DOH
+        preferred_airlines: []
+      - from: DOH
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_del
     name: Via Delhi
     type: mixed_carrier
     visa_policy: transit_only
@@ -81,35 +189,111 @@ branches:
     legs:
       - from: MOW
         to: DEL
-        preferred_airlines: [SU, AI]
+        preferred_airlines: []
       - from: DEL
         to: KTM
-        preferred_airlines: [AI, 6E]
+        preferred_airlines: []
 
-  - id: istanbul
-    name: Via Istanbul
+  - id: via_bom
+    name: Via Mumbai
     type: mixed_carrier
-    visa_policy: airside_only
-    min_connection_hours: 3
-    max_connection_hours: 10
-    legs:
-      - from: MOW
-        to: IST
-        preferred_airlines: [SU, TK]
-      - from: IST
-        to: KTM
-        preferred_airlines: [TK]
-
-  - id: china_chengdu
-    name: Via Chengdu
-    type: mixed_carrier
-    visa_policy: transit_or_twov
-    min_connection_hours: 4
+    visa_policy: transit_only
+    min_connection_hours: 5
     max_connection_hours: 12
     legs:
       - from: MOW
-        to: TFU
-        preferred_airlines: [CA, 3U]
-      - from: TFU
+        to: BOM
+        preferred_airlines: []
+      - from: BOM
         to: KTM
-        preferred_airlines: [CA, 3U]
+        preferred_airlines: []
+
+  - id: via_blr
+    name: Via Bangalore
+    type: mixed_carrier
+    visa_policy: transit_only
+    min_connection_hours: 5
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: BLR
+        preferred_airlines: []
+      - from: BLR
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_cmb
+    name: Via Colombo
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 3
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: CMB
+        preferred_airlines: []
+      - from: CMB
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_ccu
+    name: Via Kolkata
+    type: mixed_carrier
+    visa_policy: transit_only
+    min_connection_hours: 5
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: CCU
+        preferred_airlines: []
+      - from: CCU
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_dac
+    name: Via Dhaka
+    type: mixed_carrier
+    visa_policy: transit_only
+    min_connection_hours: 5
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: DAC
+        preferred_airlines: []
+      - from: DAC
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_tas_del
+    name: Via Tashkent and Delhi
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 3
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: TAS
+        preferred_airlines: []
+      - from: TAS
+        to: DEL
+        preferred_airlines: []
+      - from: DEL
+        to: KTM
+        preferred_airlines: []
+
+  - id: via_dyu_del
+    name: Via Dushanbe and Delhi
+    type: mixed_carrier
+    visa_policy: airside_only
+    min_connection_hours: 3
+    max_connection_hours: 12
+    legs:
+      - from: MOW
+        to: DYU
+        preferred_airlines: []
+      - from: DYU
+        to: DEL
+        preferred_airlines: []
+      - from: DEL
+        to: KTM
+        preferred_airlines: []

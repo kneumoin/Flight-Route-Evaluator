@@ -368,6 +368,41 @@ tasks:
       - Implementation agent reports "Stage 2 complete — ready for review"
       - Reviewer agent (REVIEWER.md) returns APPROVED
 
+  - id: s2-t08
+    title: Implement travelpayouts_data cached Data API provider
+    stage: stage2
+    dependencies: [s2-t01, s2-t07]
+    status: done
+    completed_at: 2026-07-05T10:33:00Z
+    notes: |
+      Uses official Travelpayouts Data API endpoints v1/prices/cheap and v2/prices/latest.
+      Token via TRAVELPAYOUTS_TOKEN env or --travelpayouts-token CLI only; never in repo/cache/logs.
+      Deviates from legacy aviasales provider id — travelpayouts_data is the preferred cached provider.
+    acceptance_criteria:
+      - Provider id travelpayouts_data with CoverageUnknown capabilities
+      - Endpoints v1/prices/cheap and v2/prices/latest with filesystem cache
+      - DataQuality cached on offers; baggage unknown handling via allow_unknown_for_cached_provider
+      - Report labels cached data in HTML/CSV/JSON
+      - httptest unit tests; no real API calls in CI
+      - go test ./... and go build ./... pass
+      - Secret leakage treated as blocker-level bug
+
+  - id: s2-t09
+    title: Experimental aviasales_browser local provider
+    stage: stage2
+    dependencies: [s2-t08]
+    status: done
+    notes: |
+      Local-only browser collector via chromedp. Explicit --provider aviasales_browser only.
+      Not in default config, CI, or golden tests. Fixture-based parser tests only.
+      No manual provider — intentionally skipped.
+    acceptance_criteria:
+      - Provider aviasales_browser with DataQuality browser_collected
+      - CLI flags browser-headful, browser-rate-limit, browser-cache-only, browser-timeout
+      - Cache .cache/aviasales_browser/<hash>.json
+      - Fixture tests for URL, parser, captcha, cache hit; no real Aviasales in CI
+      - Report labels for browser-collected data RU/EN
+
   # ─── Stage 3: Tuning ───────────────────────────────────────────────
 
   - id: s3-t01
